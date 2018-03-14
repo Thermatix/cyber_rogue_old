@@ -7,7 +7,6 @@ mod map;
 use object::Object;
 use map::*;
 
-
 use std::cmp;
 
 use tcod::console::*;
