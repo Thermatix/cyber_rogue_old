@@ -6,7 +6,7 @@ mod map;
 
 use object::Object;
 use map::*;
-use map::gen;
+use map::gen::*;
 
 
 use std::cmp;
@@ -98,7 +98,7 @@ fn main() {
     let mut con = Offscreen::new(MAP_WIDTH, MAP_HEIGHT);
 
     // generate map (at this point it's not drawn to the screen)
-    let (map, (player_x, player_y)) = Map::new(MAP_WIDTH, MAP_HEIGHT).generate_with(gen::dungeon::basic);
+    let (map, (player_x, player_y)) = Map::new(MAP_WIDTH, MAP_HEIGHT).generate_with(dungeon::basic);
 
     // create object representing the player
     // place the player inside the first room

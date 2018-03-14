@@ -12,7 +12,7 @@ impl Map {
   pub fn new(width: i32, height: i32) -> Self {
     Map {height: height, width: width, data:vec![vec![Tile::wall(); height as usize]; width as usize], rooms: vec![Rect]}
   }
-  pub fn generate_with(&self, creator: module {
+  pub fn generate_with(&self, creator: module) {
     creator::generate(&self)
   }
 }
