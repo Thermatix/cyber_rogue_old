@@ -1,12 +1,12 @@
-pub mod rect;
-pub mod tile;
-pub mod map;
+mod rect;
+mod tile;
+mod map;
 pub mod room;
-pub mod generator
+pub mod gen;
 
 pub use self::rect::Rect;
 pub use self::tile::Tile;
-pub use self::generator::*;
+pub use self::gen::*;
 pub use self::map::*;
 
 
