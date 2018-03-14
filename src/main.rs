@@ -96,7 +96,7 @@ fn main() {
     let mut con = Offscreen::new(MAP_WIDTH, MAP_HEIGHT);
 
     // generate map (at this point it's not drawn to the screen)
-    let (map, (player_x, player_y)) = make_map();
+    let (map, (player_x, player_y)) = Map::new(MAP_WIDTH, MAP_HEIGHT).generate_with(Dungeon::Basic);
 
     // create object representing the player
     // place the player inside the first room

@@ -9,7 +9,7 @@ pub struct Map {
 }
 
 impl Map {
-  pub fn new(height: i32, width: i32) -> Self {
+  pub fn new(width: i32, height: i32) -> Self {
     Map {height: height, width: width, data:vec![vec![Tile::wall(); height as usize]; width as usize], rooms: vec![Rect]}
   }
   pub fn generate_with(&self,generator: Generator) {
