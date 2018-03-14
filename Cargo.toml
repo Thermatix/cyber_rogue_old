@@ -1,0 +1,8 @@
+[package]
+name = "cyber_rogue"
+version = "0.1.0"
+authors = ["Martin Becker <mbeckerwork@gmail.com>"]
+
+[dependencies]
+tcod = "0.12"
+rand = "0.3.9"
