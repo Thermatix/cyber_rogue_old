@@ -1,19 +1,16 @@
 extern crate tcod;
-extern crate rand;
 
 mod object;
 mod map;
 
 use object::Object;
 use map::*;
-use map::gen::*;
-
+use map::gen;
 
 use std::cmp;
 
 use tcod::console::*;
 use tcod::colors::{self, Color};
-use rand::Rng;
 
 
 // actual size of the window
@@ -98,11 +95,11 @@ fn main() {
     let mut con = Offscreen::new(MAP_WIDTH, MAP_HEIGHT);
 
     // generate map (at this point it's not drawn to the screen)
-    let (map, (player_x, player_y)) = Map::new(MAP_WIDTH, MAP_HEIGHT).generate_with(dungeon::basic);
+    let (map, player_start) = Map::new((MAP_WIDTH, MAP_HEIGHT)).generate_with<gen::dungeon::Basic>(MAX_ROOMS,ROOM_MIN_SIZE, ROOM_MAX_SIZE);
 
     // create object representing the player
     // place the player inside the first room
-    let player = Object::new(player_x, player_y, '@', colors::WHITE);
+    let player = Object::new(player_start.0, player_start.1, '@', colors::WHITE);
 
     // create an NPC
     let npc = Object::new(SCREEN_WIDTH / 2 - 5, SCREEN_HEIGHT / 2, '@', colors::YELLOW);

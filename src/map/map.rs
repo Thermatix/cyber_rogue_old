@@ -1,19 +1,32 @@
+use map::Rect;
+use map::Tile;
+use gen::MapGenerator;
 
-type Layer = Vec<Vec<Tile>>;
+pub type Layer = Vec<Vec<Tile>>;
+pub type Location = (i32,i32);
+pub type Point = (i32,i32);
 
 pub struct Map {
-  height: i32,
-  width: i32,
-  data: Layer,
-  rooms: Vec<Rect>,
+  pub height: i32,
+  pub width: i32,
+  pub data: Layer,
+  pub rooms: Vec<Rect>,
 }
 
 impl Map {
-  pub fn new(width: i32, height: i32) -> Self {
-    Map {height: height, width: width, data:vec![vec![Tile::wall(); height as usize]; width as usize], rooms: vec![Rect]}
+  pub fn new(map_size: Point) -> Self {
+    Map {
+      height: map_size.0,
+      width: map_size.1,
+      data: vec![vec![Tile::wall(); map_size.0 as usize]; map_size.1 as usize],
+      rooms: vec![Rect]
+    }
   }
-  pub fn generate_with(&self, creator: module) {
-    creator::generate(&self)
+  pub fn generate_with<Creator>(&mut self, max_rooms: i32, room_min_size: i32, room_max_size: i32) -> (Self,Location)
+  where
+    Creator:MapGenerator,
+  {
+    Creator::generate(self, max_rooms, room_min_size, room_max_size)
   }
 }
 
