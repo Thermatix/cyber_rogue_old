@@ -22,7 +22,7 @@ impl Map {
       rooms: vec![],
     }
   }
-  pub fn generate_with<Creator>(&mut self, max_rooms: i32, room_min_size: i32, room_max_size: i32) -> (Self,Location)
+  pub fn generate_with<Creator>(self, max_rooms: i32, room_min_size: i32, room_max_size: i32) -> (Self,Location)
   where
     Creator:MapGenerator,
   {

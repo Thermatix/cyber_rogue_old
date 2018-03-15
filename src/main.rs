@@ -6,7 +6,6 @@ mod map;
 use object::Object;
 use map::*;
 
-// use std::cmp;
 
 use tcod::console::*;
 use tcod::colors::{self, Color};
@@ -38,8 +37,8 @@ const COLOR_DARK_GROUND: Color = Color { r: 50, g: 50, b: 150 };
 
 fn render_all(root: &mut Root, con: &mut Offscreen, objects: &[Object], map: &Map) {
     // go through all tiles, and set their background color
-    for y in 0..MAP_HEIGHT {
-        for x in 0..MAP_WIDTH {
+    for y in 0..(map.height - 1) {
+        for x in 0..(map.width - 1) {
             let wall = map.data[x as usize][y as usize].block_sight;
             if wall {
                 con.set_char_background(x, y, COLOR_DARK_WALL, BackgroundFlag::Set);
@@ -94,7 +93,7 @@ fn main() {
     let mut con = Offscreen::new(MAP_WIDTH, MAP_HEIGHT);
 
     // generate map (at this point it's not drawn to the screen)
-    let (map, player_start) = Map::new((MAP_WIDTH, MAP_HEIGHT)).generate_with<gen::dungeon::Basic>(MAX_ROOMS,ROOM_MIN_SIZE, ROOM_MAX_SIZE);
+    let (map, player_start) = Map::new((MAP_WIDTH, MAP_HEIGHT)).generate_with::<gen::dungeon::Basic>(MAX_ROOMS,ROOM_MIN_SIZE, ROOM_MAX_SIZE);
 
     // create object representing the player
     // place the player inside the first room

@@ -6,7 +6,7 @@ use gen::rand::Rng;
 use gen::room;
 
 impl MapGenerator for Basic {
-  fn generate(map: &mut Map, max_rooms: i32, room_min_size: i32, room_max_size: i32) -> (Map, Location) {
+  fn generate(mut map: Map, max_rooms: i32, room_min_size: i32, room_max_size: i32) -> (Map, Location) {
     // fill map.data with "blocked" tiles
 
     let mut starting_position = (0, 0);
@@ -28,7 +28,7 @@ impl MapGenerator for Basic {
         // this means there are no intersections, so this room is valid
 
         // "paint" it to the map.data's tiles
-        room::create_room(new_room, &mut map.data);
+        room::create_room(new_room, &mut map);
 
         // center coordinates of the new room, will be useful later
         let (new_x, new_y) = new_room.center();
@@ -46,12 +46,12 @@ impl MapGenerator for Basic {
           // toss a coin (random bool value -- either true or false)
           if rand::random() {
             // first move horizontally, then vertically
-            room::create_h_tunnel(prev_x, new_x, prev_y, &mut map.data);
-            room::create_v_tunnel(prev_y, new_y, new_x, &mut map.data);
+            room::create_h_tunnel(prev_x, new_x, prev_y, &mut map);
+            room::create_v_tunnel(prev_y, new_y, new_x, &mut map);
           } else {
             // first move vertically, then horizontally
-            room:: create_v_tunnel(prev_y, new_y, prev_x, &mut map.data);
-            room:: create_h_tunnel(prev_x, new_x, new_y, &mut map.data);
+            room:: create_v_tunnel(prev_y, new_y, prev_x, &mut map);
+            room:: create_h_tunnel(prev_x, new_x, new_y, &mut map);
           }
         }
 
@@ -60,7 +60,7 @@ impl MapGenerator for Basic {
       }
     }
 
-    (*map, starting_position)
+    (map, starting_position)
 
   }
 }

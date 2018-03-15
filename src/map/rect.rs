@@ -1,10 +1,10 @@
 /// A rectangle on the map, used to characterise a room.
 #[derive(Clone, Copy, Debug)]
 pub struct Rect {
-    x1: i32,
-    y1: i32,
-    x2: i32,
-    y2: i32,
+    pub x1: i32,
+    pub y1: i32,
+    pub x2: i32,
+    pub y2: i32,
 }
 
 impl Rect {
