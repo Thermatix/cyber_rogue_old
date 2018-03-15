@@ -16,9 +16,9 @@ pub struct Map {
 impl Map {
   pub fn new(map_size: Point) -> Self {
     Map {
-      height: map_size.0,
-      width: map_size.1,
-      data: vec![vec![Tile::wall(); map_size.0 as usize]; map_size.1 as usize],
+      width: map_size.0 - 1,
+      height: map_size.1 - 1,
+      data: vec![vec![Tile::wall(); map_size.1 as usize]; map_size.0 as usize],
       rooms: vec![],
     }
   }
