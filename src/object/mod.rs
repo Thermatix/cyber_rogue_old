@@ -38,7 +38,8 @@ impl Object {
 
     /// Erase the character that represents this object
     pub fn clear(&self, con: &mut Console) {
-        con.put_char(self.x, self.y, ' ', BackgroundFlag::None);
+      //figure out better way to inject clear char
+        con.put_char(self.x, self.y, ::CLEAR_CHAR, BackgroundFlag::None);
     }
 }
 

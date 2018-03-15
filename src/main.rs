@@ -29,6 +29,9 @@ const LIMIT_FPS: i32 = 20;  // 20 frames-per-second maximum
 const COLOR_DARK_WALL: Color = Color { r: 0, g: 0, b: 100 };
 const COLOR_DARK_GROUND: Color = Color { r: 50, g: 50, b: 150 };
 
+const CHARA_CHAR: char = '@';
+const CLEAR_CHAR: char = ' ';
+
 
 
 
@@ -97,10 +100,10 @@ fn main() {
 
     // create object representing the player
     // place the player inside the first room
-    let player = Object::new(player_start.0, player_start.1, '@', colors::WHITE);
+    let player = Object::new(player_start.0, player_start.1, CHARA_CHAR, colors::WHITE);
 
     // create an NPC
-    let npc = Object::new(SCREEN_WIDTH / 2 - 5, SCREEN_HEIGHT / 2, '@', colors::YELLOW);
+    let npc = Object::new(SCREEN_WIDTH / 2 - 5, SCREEN_HEIGHT / 2, CHARA_CHAR, colors::YELLOW);
 
     // the list of objects with those two
     let mut objects = [player, npc];
