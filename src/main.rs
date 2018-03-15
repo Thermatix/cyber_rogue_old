@@ -5,9 +5,8 @@ mod map;
 
 use object::Object;
 use map::*;
-use map::gen;
 
-use std::cmp;
+// use std::cmp;
 
 use tcod::console::*;
 use tcod::colors::{self, Color};
@@ -41,7 +40,7 @@ fn render_all(root: &mut Root, con: &mut Offscreen, objects: &[Object], map: &Ma
     // go through all tiles, and set their background color
     for y in 0..MAP_HEIGHT {
         for x in 0..MAP_WIDTH {
-            let wall = map[x as usize][y as usize].block_sight;
+            let wall = map.data[x as usize][y as usize].block_sight;
             if wall {
                 con.set_char_background(x, y, COLOR_DARK_WALL, BackgroundFlag::Set);
             } else {

@@ -1,11 +1,7 @@
 
 pub struct Basic;
 
-use gen::MapGenerator;
-use gen::Map;
-use gen::Rect;
-use gen::Location;
-use gen::rand;
+use gen::*;
 use gen::rand::Rng;
 use gen::room;
 

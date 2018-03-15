@@ -1,8 +1,8 @@
 /// A tile of the map and its properties
 #[derive(Clone, Copy, Debug)]
 pub struct Tile {
-    blocked: bool,
-    block_sight: bool,
+  pub  blocked: bool,
+  pub  block_sight: bool,
 }
 
 impl Tile {

@@ -1,6 +1,6 @@
-use map::Rect;
-use map::Tile;
 use gen::MapGenerator;
+use map::Tile;
+use map::Rect;
 
 pub type Layer = Vec<Vec<Tile>>;
 pub type Location = (i32,i32);
@@ -19,7 +19,7 @@ impl Map {
       height: map_size.0,
       width: map_size.1,
       data: vec![vec![Tile::wall(); map_size.0 as usize]; map_size.1 as usize],
-      rooms: vec![Rect]
+      rooms: vec![],
     }
   }
   pub fn generate_with<Creator>(&mut self, max_rooms: i32, room_min_size: i32, room_max_size: i32) -> (Self,Location)

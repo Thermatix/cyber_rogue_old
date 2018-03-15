@@ -1,3 +1,7 @@
+use map::Map;
+use tcod::console::*;
+use tcod::colors::Color;
+
 /// This is a generic object: the player, a monster, an item, the stairs...
 /// It's always represented by a character on screen.
 #[derive(Debug)]
@@ -20,7 +24,7 @@ impl Object {
 
     /// move by the given amount, if the destination is not blocked
     pub fn move_by(&mut self, dx: i32, dy: i32, map: &Map) {
-        if !map[(self.x + dx) as usize][(self.y + dy) as usize].blocked {
+        if !map.data[(self.x + dx) as usize][(self.y + dy) as usize].blocked {
             self.x += dx;
             self.y += dy;
         }
