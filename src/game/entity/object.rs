@@ -1,4 +1,6 @@
+
 use super::*;
+use tcod::colors::Color;
 // use entity::*;
 
 /// This is a generic object: the player, a monster, an item, the stairs...

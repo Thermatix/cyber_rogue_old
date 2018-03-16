@@ -1,10 +1,12 @@
 pub extern crate tcod;
+pub extern crate rand;
 
 use tcod::colors;
 
 mod game;
 
 use game::entity::Object;
+use game::entity::emplacement;
 use game::mapping::*;
 use self::gen;
 
@@ -24,6 +26,7 @@ const CONFIG: config::Options = config::Options {
   room_max_no:      30,
   fov_light_walls:  true,
   torch_radius:     10,
+  max_monsters:     3,
 };
 
 // size of the map
@@ -74,15 +77,14 @@ fn main() {
 
     // generate map (at this point it's not drawn to the screen)
     let (mut map, player_start) = Map::new((MAP_WIDTH, MAP_HEIGHT)).generate_with::<gen::dungeon::Basic>(CONFIG.room_max_no, CONFIG.room_min_size, CONFIG.room_max_size);
-
     // create object representing the player
     // place the player inside the first room
-    let player = Object::new(player_start.0, player_start.1, CHARA_CHAR, colors::WHITE);
-    // create an NPC
-    let npc = Object::new(CONFIG.screen_width / 2 - 5, CONFIG.screen_height / 2, CHARA_CHAR, colors::YELLOW);
+    let mut objects = vec![Object::new(player_start.0, player_start.1, CHARA_CHAR, colors::WHITE)];
 
+    for room in &map.rooms {
+      emplacement::place_objects(&room,&mut objects)
+    };
     // the list of objects with those two
-    let mut objects = [player, npc];
 
     let mut previous_player_position = (-1, -1);
 

@@ -1,4 +1,4 @@
-extern crate rand;
+use ::rand;
 
 pub mod dungeon;
 use mapping::*;

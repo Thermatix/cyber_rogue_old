@@ -7,4 +7,5 @@ pub struct Options {
   pub room_max_no: i32,
   pub fov_light_walls: bool,
   pub torch_radius: i32,
+  pub max_monsters: i32,
 }
