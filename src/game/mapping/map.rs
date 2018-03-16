@@ -50,6 +50,10 @@ impl Map {
         for y in 0..self.height {
             let visible = fov_map.is_in_fov(x,y);
             let wall = self.data[x as usize][y as usize].block_sight;
+            let explored = &mut self.data[x as usize][y as usize].explored;
+            if visible {
+              *explored = true
+            }
             let colour = match (visible,wall) {
               // outside of field of view:
                   (false, true) => COLOR_DARK_WALL,
@@ -58,7 +62,9 @@ impl Map {
                   (true, true) => COLOR_LIGHT_WALL,
                   (true, false) => COLOR_LIGHT_GROUND,
             };
-            con.set_char_background(x, y, colour, BackgroundFlag::Set );
+            if *explored {
+              con.set_char_background(x, y, colour, BackgroundFlag::Set );
+            }
         }
     };
 
