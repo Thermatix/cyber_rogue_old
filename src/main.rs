@@ -1,70 +1,41 @@
-extern crate tcod;
+pub extern crate tcod;
 
-mod object;
-mod map;
+use tcod::colors;
 
-use object::Object;
-use map::*;
+mod game;
+
+use game::entity::Object;
+use game::mapping::*;
+use self::gen;
 
 
-use tcod::console::*;
-use tcod::colors::{self, Color};
-use ::tcod::map::{Map as FovMap, FovAlgorithm};
 
+mod sys;
+use sys::*;
+
+const CONFIG: config::Options = config::Options {
 // actual size of the window
-const SCREEN_WIDTH: i32 = 80;
-const SCREEN_HEIGHT: i32 = 50;
+  screen_width:     80,
+  screen_height:    50,
+  fps_limit:        20,
+//parameters for dungeon generator
+  room_min_size:    6,
+  room_max_size:    10,
+  room_max_no:      30,
+  fov_light_walls:  true,
+  torch_radius:     10,
+};
 
 // size of the map
 const MAP_WIDTH: i32 = 80;
 const MAP_HEIGHT: i32 = 45;
 
-//parameters for dungeon generator
-const ROOM_MAX_SIZE: i32 = 10;
-const ROOM_MIN_SIZE: i32 = 6;
-const MAX_ROOMS: i32 = 30;
-
-const LIMIT_FPS: i32 = 20;  // 20 frames-per-second maximum
-
-
 const CHARA_CHAR: char = '@';
 const CLEAR_CHAR: char = ' ';
 
 
-const FOV_ALGO: FovAlgorithm = FovAlgorithm::Basic;
-const FOV_LIGHT_WALLS: bool = true;
-const TORCH_RADIUS: i32 = 10;
 
 
-
-
-  fn fov_check(map: &Map, fov_map: &mut FovMap) {
-    for x in 0..map.width {
-      for y in 0..map.height {
-        fov_map.set(x,y,
-                    !map.data[x as usize][y as usize].block_sight,
-                    !map.data[x as usize][y as usize].blocked);
-      }
-    }
-  }
-
-
-fn render_all(root: &mut Root, con: &mut Offscreen, objects: &[Object], map: &mut Map, fov_map: &mut FovMap, fov_recompute: bool) {
-    // go through all tiles, and set their background color
-  fov_map.compute_fov(objects[0].x, objects[0].y, TORCH_RADIUS, FOV_LIGHT_WALLS,FOV_ALGO);
-
-  map.render(con, fov_map, fov_recompute);
-
-    // draw all objects in the list
-    for object in objects {
-        if fov_map.is_in_fov(object.x, object.y) {
-            object.draw(con);
-        }
-    }
-
-    // blit the contents of "con" to the root console
-    blit(con, (0, 0), (map.width, map.height), root, (0, 0), 1.0, 1.0);
-}
 
 fn handle_keys(root: &mut Root, player: &mut Object, map: &Map) -> bool {
     use tcod::input::Key;
@@ -95,33 +66,33 @@ fn main() {
     let mut root = Root::initializer()
         .font("arial10x10.png", FontLayout::Tcod)
         .font_type(FontType::Greyscale)
-        .size(SCREEN_WIDTH, SCREEN_HEIGHT)
+        .size(CONFIG.screen_width, CONFIG.screen_height)
         .title("Cyber Rogue")
         .init();
-    tcod::system::set_fps(LIMIT_FPS);
+    tcod::system::set_fps(CONFIG.fps_limit);
     let mut con = Offscreen::new(MAP_WIDTH, MAP_HEIGHT);
 
     // generate map (at this point it's not drawn to the screen)
-    let (mut map, player_start) = Map::new((MAP_WIDTH, MAP_HEIGHT)).generate_with::<gen::dungeon::Basic>(MAX_ROOMS,ROOM_MIN_SIZE, ROOM_MAX_SIZE);
+    let (mut map, player_start) = Map::new((MAP_WIDTH, MAP_HEIGHT)).generate_with::<gen::dungeon::Basic>(CONFIG.room_max_no, CONFIG.room_min_size, CONFIG.room_max_size);
 
     // create object representing the player
     // place the player inside the first room
     let player = Object::new(player_start.0, player_start.1, CHARA_CHAR, colors::WHITE);
-    let mut fov_map = FovMap::new(MAP_WIDTH, MAP_HEIGHT);
     // create an NPC
-    let npc = Object::new(SCREEN_WIDTH / 2 - 5, SCREEN_HEIGHT / 2, CHARA_CHAR, colors::YELLOW);
+    let npc = Object::new(CONFIG.screen_width / 2 - 5, CONFIG.screen_height / 2, CHARA_CHAR, colors::YELLOW);
 
     // the list of objects with those two
     let mut objects = [player, npc];
 
     let mut previous_player_position = (-1, -1);
 
-    fov_check(&map,&mut fov_map);
+    let mut fov_map = render::fov_check(&map);
 
     while !root.window_closed() {
         // render the screen
-        let fov_recompute = previous_player_position != (objects[0].x, objects[0].y);
-        render_all(&mut root, &mut con, &objects, &mut map, &mut fov_map, fov_recompute);
+        if previous_player_position != (objects[0].x, objects[0].y) {
+          render::all(&mut root, &mut con, &objects, &mut map, &mut fov_map);
+        }
 
         root.flush();
 

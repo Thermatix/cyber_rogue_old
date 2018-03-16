@@ -9,7 +9,7 @@ pub struct Rect {
 
 impl Rect {
     pub fn new(x: i32, y: i32, w: i32, h: i32) -> Self {
-        Rect { x1: x, y1: y, x2: x + w, y2: y + h }
+        Self { x1: x, y1: y, x2: x + w, y2: y + h }
     }
 
     pub fn center(&self) -> (i32, i32) {

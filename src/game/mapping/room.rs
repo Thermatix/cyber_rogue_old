@@ -1,5 +1,5 @@
 use std::cmp;
-use map::*;
+use mapping::*;
 
 pub fn create_room(room: Rect, map: &mut Map) {
     // go through the tiles in the rectangle and make them passable
