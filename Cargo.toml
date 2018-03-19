@@ -6,3 +6,5 @@ authors = ["Martin Becker <mbeckerwork@gmail.com>"]
 [dependencies]
 tcod = "0.12"
 rand = "0.3.9"
+#for ensuring ECS system communication
+# ditto = "0.2.0"

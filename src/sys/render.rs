@@ -25,14 +25,14 @@ pub fn fov_check(map: &Map) -> FovMap {
 }
 
 
-pub fn all(root: &mut Root, con: &mut Offscreen, objects: &[Object], map: &mut Map, fov_map: &mut FovMap) {
+pub fn all(root: &mut Root, con: &mut Offscreen, map: &mut Map, fov_map: &mut FovMap) {
 
   // go through all tiles, and set their background color
-  fov_map.compute_fov(objects[0].x, objects[0].y, ::CONFIG.torch_radius, ::CONFIG.fov_light_walls,FOV_ALGO);
+  fov_map.compute_fov(map.objects[0].x, map.objects[0].y, ::CONFIG.torch_radius, ::CONFIG.fov_light_walls,FOV_ALGO);
   map.render(con, &fov_map);
 
   // draw all objects in the list
-  for object in objects {
+  for object in &map.objects {
     if fov_map.is_in_fov(object.x, object.y) {
       object.draw(con);
     }

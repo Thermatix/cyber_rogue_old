@@ -1,6 +1,7 @@
 pub extern crate tcod;
 pub extern crate rand;
 
+
 use tcod::colors;
 
 mod game;
@@ -40,10 +41,11 @@ const CLEAR_CHAR: char = ' ';
 
 
 
-fn handle_keys(root: &mut Root, player: &mut Object, map: &Map) -> bool {
+fn handle_keys(root: &mut Root, map: &mut Map) -> bool {
     use tcod::input::Key;
     use tcod::input::KeyCode::*;
-
+    // let player = &mut map.objects[0];
+    let mut player = map.objects.remove(0);
     let key = root.wait_for_keypress(true);
     match key {
         Key { code: Enter, alt: true, .. } => {
@@ -61,7 +63,7 @@ fn handle_keys(root: &mut Root, player: &mut Object, map: &Map) -> bool {
 
         _ => {},
     }
-
+    map.objects.insert(0,player);
     false
 }
 
@@ -79,11 +81,9 @@ fn main() {
     let (mut map, player_start) = Map::new((MAP_WIDTH, MAP_HEIGHT)).generate_with::<gen::dungeon::Basic>(CONFIG.room_max_no, CONFIG.room_min_size, CONFIG.room_max_size);
     // create object representing the player
     // place the player inside the first room
-    let mut objects = vec![Object::new(player_start.0, player_start.1, CHARA_CHAR, colors::WHITE)];
+    map.objects.push(Object::new(player_start.0, player_start.1, CHARA_CHAR, colors::WHITE));
 
-    for room in &map.rooms {
-      emplacement::place_objects(&room,&mut objects)
-    };
+    emplacement::place_objects(&mut map);
     // the list of objects with those two
 
     let mut previous_player_position = (-1, -1);
@@ -92,21 +92,21 @@ fn main() {
 
     while !root.window_closed() {
         // render the screen
-        if previous_player_position != (objects[0].x, objects[0].y) {
-          render::all(&mut root, &mut con, &objects, &mut map, &mut fov_map);
+        if previous_player_position != (map.objects[0].x, map.objects[0].y) {
+          render::all(&mut root, &mut con,  &mut map, &mut fov_map);
         }
 
         root.flush();
 
         // erase all objects at their old locations, before they move
-        for object in &objects {
+        for object in &map.objects {
             object.clear(&mut con)
         }
 
         // handle keys and exit game if needed
-        let player = &mut objects[0];
-        previous_player_position = (player.x, player.y);
-        let exit = handle_keys(&mut root, player, &map);
+        previous_player_position = (map.objects[0].x, map.objects[0].y);
+
+        let exit = handle_keys(&mut root, &mut map);
         if exit {
             break
         }
