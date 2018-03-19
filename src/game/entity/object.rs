@@ -32,6 +32,16 @@ impl Object {
         }
     }
 
+    pub fn blocked(x: i32, y: i32, map: &Map) -> bool {
+      if map[x as usize][y as usize].blocked {
+        true
+      } else {
+        map.objects.iter().any( |object| {
+          object.blocks && object.pos() == (x,y)
+        })
+      }
+    }
+
     pub fn pos(&self) -> Location {
       (self.x, self.y)
     }
@@ -45,7 +55,7 @@ impl Object {
     pub fn move_by(&mut self, dx: i32, dy: i32, map: &Map) {
       let nx = self.x + dx;
       let ny = self.y + dy;
-      if !Self::blocked((nx,ny),&map) {
+      if !Self::blocked(nx,ny,&map) {
         self.set_pos((nx, ny));
       };
     }
@@ -62,14 +72,4 @@ impl Object {
         con.put_char(self.x, self.y, ::CLEAR_CHAR, BackgroundFlag::None);
     }
 
-    fn blocked(pos: Location, map: &Map) -> bool {
-      if map[pos.0 as usize][pos.1 as usize].blocked {
-        true
-      } else {
-        map.objects.iter().any( |object| {
-          object.blocks && object.pos() == pos
-        })
-      }
-
-    }
 }
