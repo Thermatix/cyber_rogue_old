@@ -32,6 +32,7 @@ pub fn all(root: &mut Root, con: &mut Offscreen, map: &mut Map, fov_map: &mut Fo
 
   // draw all objects in the list
   for object in &map.objects {
+
     if fov_map.is_in_fov(object.x, object.y) {
       object.draw(con);
     }
@@ -41,3 +42,12 @@ pub fn all(root: &mut Root, con: &mut Offscreen, map: &mut Map, fov_map: &mut Fo
   blit(con, (0, 0), (map.width, map.height), root, (0, 0), 1.0, 1.0);
 
 }
+
+pub fn clear_objects(map: &mut Map, con: &mut Offscreen) {
+
+  for object in &map.objects {
+      object.clear(con);
+  };
+}
+
+

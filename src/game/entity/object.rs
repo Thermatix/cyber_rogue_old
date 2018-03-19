@@ -1,9 +1,24 @@
+pub use tcod::console::*;
+pub use tcod::colors;
 
-use super::*;
+
 use tcod::colors::Color;
 // use entity::*;
 
+use game::mapping::Map;
 use game::types::Location;
+
+
+#[derive(Debug)]
+pub enum Kind {
+  Player,
+  Npc,
+  Mob,
+  Boss,
+  Object,
+  Item,
+  Fixture,
+}
 
 /// This is a generic object: the player, a monster, an item, the stairs...
 /// It's always represented by a character on screen.
@@ -16,19 +31,21 @@ pub struct Object {
   pub name: String,
   pub blocks: bool,
   pub alive: bool,
+  pub kind: Kind,
 
 }
 
 impl Object {
-    pub fn new(init_pos: Location, char: char, name: &str, color: Color, blocks: bool) -> Self {
-        Object {
+    pub fn new(init_pos: Location, char: char, color: Color, name: &str, blocks: bool, kind: Kind) -> Self {
+        Self {
             x: init_pos.0,
             y: init_pos.1,
             char: char,
             color: color,
             name: name.into(),
             blocks: blocks,
-            alive: false,
+            alive: true,
+            kind: kind,
         }
     }
 

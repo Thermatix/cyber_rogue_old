@@ -1,9 +1,12 @@
-use entity::rand;
+use rand;
 use entity::rand::Rng;
 use entity::colors;
 
+
+
 use game::Map;
 use game::Object;
+use game::entity;
 
 
 pub fn place_objects(map: &mut Map) {
@@ -16,9 +19,9 @@ pub fn place_objects(map: &mut Map) {
         let y = rand::thread_rng().gen_range(room.y1 + 1, room.y2);
         if !Object::blocked(x,y,&map) {
           let mut monster = if rand::random::<f32>() < 0.8 {// 80% chance of getting an orc
-            Object::new((x, y), '0',"Orc", colors::DESATURATED_GREEN, true)
+            Object::new((x, y), '0',colors::DESATURATED_GREEN,"Orc", true, entity::Kind::Mob )
           }  else {
-            Object::new((x, y),'T', "Goblin", colors::DARKER_GREEN,true)
+            Object::new((x, y),'T', colors::DARKER_GREEN, "Goblin", true, entity::Kind::Mob)
           };
           map.objects.push(monster);
         };

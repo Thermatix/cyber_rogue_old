@@ -6,15 +6,14 @@ use tcod::colors;
 
 mod game;
 
-use game::entity::Object;
-use game::entity::emplacement;
+use game::entity::*;
 use game::mapping::*;
+
 use self::gen;
-
-
 
 mod sys;
 use sys::*;
+use sys::controls::PlayerAction;
 
 const CONFIG: config::Options = config::Options {
 // actual size of the window
@@ -41,31 +40,6 @@ const CLEAR_CHAR: char = ' ';
 
 
 
-fn handle_keys(root: &mut Root, map: &mut Map) -> bool {
-    use tcod::input::Key;
-    use tcod::input::KeyCode::*;
-    // let player = &mut map.objects[0];
-    let mut player = map.objects.remove(0);
-    let key = root.wait_for_keypress(true);
-    match key {
-        Key { code: Enter, alt: true, .. } => {
-            // Alt+Enter: toggle fullscreen
-            let fullscreen = root.is_fullscreen();
-            root.set_fullscreen(!fullscreen);
-        }
-        Key { code: Escape, .. } => return true,  // exit game
-
-        // movement keys
-        Key { code: Up, .. } => player.move_by(0, -1, map),
-        Key { code: Down, .. } => player.move_by(0, 1, map),
-        Key { code: Left, .. } => player.move_by(-1, 0, map),
-        Key { code: Right, .. } => player.move_by(1, 0, map),
-
-        _ => {},
-    }
-    map.objects.insert(0,player);
-    false
-}
 
 fn main() {
     let mut root = Root::initializer()
@@ -81,7 +55,7 @@ fn main() {
     let (mut map, player_start) = Map::new((MAP_WIDTH, MAP_HEIGHT)).generate_with::<gen::dungeon::Basic>(CONFIG.room_max_no, CONFIG.room_min_size, CONFIG.room_max_size);
     // create object representing the player
     // place the player inside the first room
-    map.objects.push(Object::new(player_start, CHARA_CHAR, "player", colors::WHITE,true));
+    map.objects.push(Object::new(player_start, CHARA_CHAR,  colors::WHITE,"" ,true, Kind::Player));
 
     emplacement::place_objects(&mut map);
     // the list of objects with those two
@@ -99,16 +73,21 @@ fn main() {
         root.flush();
 
         // erase all objects at their old locations, before they move
-        for object in &map.objects {
-            object.clear(&mut con)
-        }
+        render::clear_objects(&mut map, &mut con);
 
-        // handle keys and exit game if needed
         previous_player_position = (map.objects[0].x, map.objects[0].y);
+        // handle keys and exit game if needed
+        match controls::handle_keys(&mut root, &mut map) {
+          PlayerAction::TookTurn => {
+            // for object in &map.objects {
+            //
+            //   if (object )
+            // }
+          },
+          PlayerAction::DidntTakeTurn => {
 
-        let exit = handle_keys(&mut root, &mut map);
-        if exit {
-            break
+          }
+          PlayerAction::Exit => break,
         }
     }
 }
