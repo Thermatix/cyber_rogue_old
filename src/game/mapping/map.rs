@@ -17,15 +17,12 @@ const COLOR_LIGHT_WALL: Color = Color { r: 130, g: 110, b: 50 };
 const COLOR_DARK_GROUND: Color = Color { r: 50, g: 50, b: 150 };
 const COLOR_LIGHT_GROUND: Color = Color { r: 200, g: 180, b: 50 };
 
-pub type Layer = Vec<Vec<Tile>>;
-pub type Location = (i32,i32);
-pub type Point = (i32,i32);
-
+use game::types::*;
 
 pub struct Map {
   pub height: i32,
   pub width: i32,
-  pub data: Layer,
+  pub data: Grid,
   pub rooms: Vec<Rect>,
   pub objects: Vec<Object>,
 }

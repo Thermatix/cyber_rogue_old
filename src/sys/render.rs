@@ -3,7 +3,6 @@ use sys::FovAlgorithm;
 
 use game::mapping::Map;
 use game::mapping::FovMap;
-use game::Object;
 
 const FOV_ALGO: FovAlgorithm = FovAlgorithm::Basic;
 

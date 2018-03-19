@@ -4,6 +4,7 @@ pub struct Basic;
 use gen::*;
 use self::rand::Rng;
 use self::room;
+use game::types::Location;
 
 impl MapGenerator for Basic {
   fn generate(mut map: Map, max_rooms: i32, room_min_size: i32, room_max_size: i32) -> (Map, Location) {
