@@ -3,6 +3,8 @@ use super::*;
 use tcod::colors::Color;
 // use entity::*;
 
+use game::types::Location;
+
 /// This is a generic object: the player, a monster, an item, the stairs...
 /// It's always represented by a character on screen.
 #[derive(Debug)]
@@ -14,13 +16,22 @@ pub struct Object {
 }
 
 impl Object {
-    pub fn new(x: i32, y: i32, char: char, color: Color) -> Self {
+    pub fn new(init_pos: Location, char: char, color: Color) -> Self {
         Object {
-            x: x,
-            y: y,
+            x: init_pos.0,
+            y: init_pos.1,
             char: char,
             color: color,
         }
+    }
+
+    pub fn pos(&self) -> Location {
+      (self.x, self.y)
+    }
+
+    pub fn set_pos(&mut self, pos: Location) {
+      self.x = pos.0;
+      self.y = pos.1;
     }
 
     /// move by the given amount, if the destination is not blocked
