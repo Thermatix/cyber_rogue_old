@@ -45,9 +45,9 @@ impl Object {
     pub fn move_by(&mut self, dx: i32, dy: i32, map: &Map) {
       let nx = self.x + dx;
       let ny = self.y + dy;
-        if !map[nx as usize][ ny as usize].blocked {
-          self.set_pos((nx, ny));
-        };
+      if !Self::blocked((nx,ny),&map) {
+        self.set_pos((nx, ny));
+      };
     }
 
     /// set the color and then draw the character that represents this object at its position
@@ -62,7 +62,14 @@ impl Object {
         con.put_char(self.x, self.y, ::CLEAR_CHAR, BackgroundFlag::None);
     }
 
-    // fn is_blocked(pos: Location, map: &Map, objects: &[Object]) -> bool {
-    //   if map.
-    // }
+    fn blocked(pos: Location, map: &Map) -> bool {
+      if map[pos.0 as usize][pos.1 as usize].blocked {
+        true
+      } else {
+        map.objects.iter().any( |object| {
+          object.blocks && object.pos() == pos
+        })
+      }
+
+    }
 }
