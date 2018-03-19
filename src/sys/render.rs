@@ -16,8 +16,8 @@ pub fn fov_check(map: &Map) -> FovMap {
   for x in 0..map.width {
     for y in 0..map.height {
       fov_map.set(x,y,
-                  !map.data[x as usize][y as usize].block_sight,
-                  !map.data[x as usize][y as usize].blocked);
+                  !map[x as usize][y as usize].block_sight,
+                  !map[x as usize][y as usize].blocked);
     }
   };
   fov_map

@@ -10,7 +10,8 @@ use self::mapping::Tile;
 use self::mapping::Rect;
 use self::mapping::gen::MapGenerator;
 
-
+use std::ops::Index;
+use std::ops::IndexMut;
 
 const COLOR_DARK_WALL: Color = Color { r: 0, g: 0, b: 100 };
 const COLOR_LIGHT_WALL: Color = Color { r: 130, g: 110, b: 50 };
@@ -22,9 +23,24 @@ use game::types::*;
 pub struct Map {
   pub height: i32,
   pub width: i32,
-  pub data: Grid,
+  pub data: Grid<Tile>,
   pub rooms: Vec<Rect>,
   pub objects: Vec<Object>,
+}
+
+impl Index<usize> for Map {
+  type Output = Vec<Tile>;
+
+  fn index(&self, x: usize) -> &Vec<Tile> {
+    &self.data[x]
+  }
+}
+
+impl IndexMut<usize> for Map{
+
+  fn index_mut(&mut self, x: usize) -> &mut Vec<Tile> {
+    &mut self.data[x]
+  }
 }
 
 impl Map {
@@ -50,8 +66,8 @@ impl Map {
     for x in 0..self.width {
         for y in 0..self.height {
             let visible = fov_map.is_in_fov(x,y);
-            let wall = self.data[x as usize][y as usize].block_sight;
-            let explored = &mut self.data[x as usize][y as usize].explored;
+            let wall = self[x as usize][y as usize].block_sight;
+            let explored = &mut self[x as usize][y as usize].explored;
             if visible {
               *explored = true
             }

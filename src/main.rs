@@ -81,7 +81,7 @@ fn main() {
     let (mut map, player_start) = Map::new((MAP_WIDTH, MAP_HEIGHT)).generate_with::<gen::dungeon::Basic>(CONFIG.room_max_no, CONFIG.room_min_size, CONFIG.room_max_size);
     // create object representing the player
     // place the player inside the first room
-    map.objects.push(Object::new(player_start, CHARA_CHAR, colors::WHITE));
+    map.objects.push(Object::new(player_start, CHARA_CHAR, "player", colors::WHITE,true));
 
     emplacement::place_objects(&mut map);
     // the list of objects with those two

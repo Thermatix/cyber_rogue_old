@@ -13,15 +13,22 @@ pub struct Object {
   pub  y: i32,
   pub  char: char,
   pub  color: Color,
+  pub name: String,
+  pub blocks: bool,
+  pub alive: bool,
+
 }
 
 impl Object {
-    pub fn new(init_pos: Location, char: char, color: Color) -> Self {
+    pub fn new(init_pos: Location, char: char, name: &str, color: Color, blocks: bool) -> Self {
         Object {
             x: init_pos.0,
             y: init_pos.1,
             char: char,
             color: color,
+            name: name.into(),
+            blocks: blocks,
+            alive: false,
         }
     }
 
@@ -36,10 +43,11 @@ impl Object {
 
     /// move by the given amount, if the destination is not blocked
     pub fn move_by(&mut self, dx: i32, dy: i32, map: &Map) {
-        if !map.data[(self.x + dx) as usize][(self.y + dy) as usize].blocked {
-            self.x += dx;
-            self.y += dy;
-        }
+      let nx = self.x + dx;
+      let ny = self.y + dy;
+        if !map[nx as usize][ ny as usize].blocked {
+          self.set_pos((nx, ny));
+        };
     }
 
     /// set the color and then draw the character that represents this object at its position
@@ -53,4 +61,8 @@ impl Object {
       //figure out better way to inject clear char
         con.put_char(self.x, self.y, ::CLEAR_CHAR, BackgroundFlag::None);
     }
+
+    // fn is_blocked(pos: Location, map: &Map, objects: &[Object]) -> bool {
+    //   if map.
+    // }
 }
