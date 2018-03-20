@@ -7,9 +7,10 @@ use tcod::colors::Color;
 
 use game::mapping::Map;
 use game::types::Location;
+use game::mapping::Tile;
 
 
-#[derive(Debug)]
+#[derive(Debug,PartialEq)]
 pub enum Kind {
   Player,
   Npc,
@@ -18,6 +19,12 @@ pub enum Kind {
   Object,
   Item,
   Fixture,
+}
+
+pub enum Block_Check<object,tile> {
+  Empty,
+  Object(object),
+  Wall(tile),
 }
 
 /// This is a generic object: the player, a monster, an item, the stairs...
@@ -49,13 +56,17 @@ impl Object {
         }
     }
 
-    pub fn blocked(x: i32, y: i32, map: &Map) -> bool {
+    pub fn blocked(x: i32, y: i32, map: &Map) -> Block_Check<&Object,&Tile> {
       if map[x as usize][y as usize].blocked {
-        true
+        Block_Check::Wall(&map[x as usize][y as usize])
       } else {
-        map.objects.iter().any( |object| {
+        let res = map.objects.iter().position( |object| {
           object.blocks && object.pos() == (x,y)
-        })
+        });
+        match res {
+          Some(index) => Block_Check::Object(&map.objects[index]),
+          None => Block_Check::Empty
+        }
       }
     }
 
@@ -69,11 +80,28 @@ impl Object {
     }
 
     /// move by the given amount, if the destination is not blocked
-    pub fn move_by(&mut self, dx: i32, dy: i32, map: &Map) {
+    pub fn move_by(&mut self, dx: i32, dy: i32, map: &Map) -> bool {
       let nx = self.x + dx;
       let ny = self.y + dy;
-      if !Self::blocked(nx,ny,&map) {
-        self.set_pos((nx, ny));
+      match Self::blocked(nx,ny,&map) {
+        Block_Check::Wall(_) => false,
+        Block_Check::Object(ref obj) => {
+          self.action(&obj);
+          false
+        },
+        Block_Check::Empty=> {
+          self.set_pos((nx,ny));
+          true
+        }
+      }
+    }
+
+    pub fn action(&self,obj: &Object) {
+      match obj.kind {
+        Kind::Mob => {
+          println!("The {} laughs at your puny efforts to attack him!", obj.name);
+        },
+        _ => (),
       };
     }
 

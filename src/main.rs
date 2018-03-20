@@ -79,10 +79,12 @@ fn main() {
         // handle keys and exit game if needed
         match controls::handle_keys(&mut root, &mut map) {
           PlayerAction::TookTurn => {
-            // for object in &map.objects {
-            //
-            //   if (object )
-            // }
+            for object in &map.objects {
+
+              if object.kind != Kind::Player {
+                // println!("The {} growls!", object.name);
+              }
+            }
           },
           PlayerAction::DidntTakeTurn => {
 
