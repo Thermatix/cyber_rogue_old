@@ -1,15 +1,13 @@
-pub use tcod::console::*;
-pub use tcod::colors;
+use tcod::console::*;
+use tcod::Color;
 
+use game::mapping::{Map, Tile};
 
-use tcod::colors::Color;
-// use entity::*;
-
-use game::mapping::Map;
 use game::types::Location;
-use game::mapping::Tile;
 
+use game::entity::{Ai,Stats};
 
+#[allow(dead_code)]
 #[derive(Debug,PartialEq)]
 pub enum Kind {
   Player,
@@ -21,10 +19,14 @@ pub enum Kind {
   Fixture,
 }
 
-pub enum Block_Check<object,tile> {
+
+
+
+
+pub enum BlockCheck<Object,Tile> {
   Empty,
-  Object(object),
-  Wall(tile),
+  Object(Object),
+  Wall(Tile),
 }
 
 /// This is a generic object: the player, a monster, an item, the stairs...
@@ -39,6 +41,8 @@ pub struct Object {
   pub blocks: bool,
   pub alive: bool,
   pub kind: Kind,
+  pub stats: Option<Stats>,
+  pub ai: Option<Ai>,
 
 }
 
@@ -53,19 +57,21 @@ impl Object {
             blocks: blocks,
             alive: true,
             kind: kind,
+            stats: None,
+            ai: None,
         }
     }
 
-    pub fn blocked(x: i32, y: i32, map: &Map) -> Block_Check<&Object,&Tile> {
+    pub fn blocked(x: i32, y: i32, map: &Map) -> BlockCheck<&Object,&Tile> {
       if map[x as usize][y as usize].blocked {
-        Block_Check::Wall(&map[x as usize][y as usize])
+        BlockCheck::Wall(&map[x as usize][y as usize])
       } else {
         let res = map.objects.iter().position( |object| {
           object.blocks && object.pos() == (x,y)
         });
         match res {
-          Some(index) => Block_Check::Object(&map.objects[index]),
-          None => Block_Check::Empty
+          Some(index) => BlockCheck::Object(&map.objects[index]),
+          None => BlockCheck::Empty
         }
       }
     }
@@ -84,19 +90,19 @@ impl Object {
       let nx = self.x + dx;
       let ny = self.y + dy;
       match Self::blocked(nx,ny,&map) {
-        Block_Check::Wall(_) => false,
-        Block_Check::Object(ref obj) => {
+        BlockCheck::Wall(_) => false,
+        BlockCheck::Object(ref obj) => {
           self.action(&obj);
           false
         },
-        Block_Check::Empty=> {
+        BlockCheck::Empty=> {
           self.set_pos((nx,ny));
           true
         }
       }
     }
 
-    pub fn action(&self,obj: &Object) {
+    fn action(&self,obj: &Object) {
       match obj.kind {
         Kind::Mob => {
           println!("The {} laughs at your puny efforts to attack him!", obj.name);
