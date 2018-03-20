@@ -56,6 +56,7 @@ fn main() {
     // create object representing the player
     // place the player inside the first room
     map.objects.push(Object::new(player_start, CHARA_CHAR,  colors::WHITE,"" ,true, Kind::Player));
+    map.objects[0].stats = Some(Stats{max_hp: 30, hp: 30, defense: 2, power: 5});
 
     emplacement::place_objects(&mut map);
     // the list of objects with those two
