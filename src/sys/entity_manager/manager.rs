@@ -35,11 +35,11 @@ impl<'m, Comp: Component<'m>> Manager<'m, Comp> {
     }
 
     /// Create entity and return it's "ID"
-    pub fn create(&mut self) -> Option<ID> {
+    pub fn create(&mut self) -> ID {
         let id: ID = self.generate_id();
         let entity: Entity = Entity::new(id.clone());
         self.entities.insert(id.clone(), entity);
-        Some(id.clone())
+        id.clone()
     }
 
 
