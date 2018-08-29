@@ -1,0 +1,17 @@
+[engine]
+screen_width=80
+screen_height=50
+fps_limit=20
+
+[lighting]
+fov_light_walls=true
+torch_radius=10
+
+[rooms]
+room_min_size=6
+room_max_size=6
+room_max_no=30
+
+[monsters]
+max_monsters=3
+

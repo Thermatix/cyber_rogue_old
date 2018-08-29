@@ -5,13 +5,13 @@ use game::mapping::{Map, Tile};
 
 use game::types::Location;
 
-use game::entity::{Ai,Stats};
+use game::entity::{Ai,Stats, Manager};
 
 #[allow(dead_code)]
-#[derive(Debug,PartialEq)]
+#[derive(Debug,Clone,PartialEq)]
 pub enum Kind {
   Player,
-  Npc,
+  NPC,
   Mob,
   Boss,
   Object,
@@ -22,21 +22,20 @@ pub enum Kind {
 
 
 
-
-pub enum BlockCheck<Object,Tile> {
+pub enum BlockCheck<Entity,Tile> {
   Empty,
-  Object(Object),
+  Entity(Entity),
   Wall(Tile),
 }
 
 /// This is a generic object: the player, a monster, an item, the stairs...
 /// It's always represented by a character on screen.
-#[derive(Debug)]
-pub struct Object {
-  pub  x: i32,
-  pub  y: i32,
-  pub  char: char,
-  pub  color: Color,
+#[derive(Debug,Clone)]
+pub struct  Entity{
+  pub x: i32,
+  pub y: i32,
+  pub char: char,
+  pub color: Color,
   pub name: String,
   pub blocks: bool,
   pub alive: bool,
@@ -46,7 +45,7 @@ pub struct Object {
 
 }
 
-impl Object {
+impl  Entity {
     pub fn new(init_pos: Location, char: char, color: Color, name: &str, blocks: bool, kind: Kind) -> Self {
         Self {
             x: init_pos.0,
@@ -62,15 +61,18 @@ impl Object {
         }
     }
 
-    pub fn blocked(x: i32, y: i32, map: &Map) -> BlockCheck<&Object,&Tile> {
+    pub fn blocked<'e, 'm>(x: i32, y: i32, map: &'m Map, ents: &'e Manager) -> BlockCheck<&'e Entity,&'m Tile> {
       if map[x as usize][y as usize].blocked {
         BlockCheck::Wall(&map[x as usize][y as usize])
       } else {
-        let res = map.objects.iter().position( |object| {
-          object.blocks && object.pos() == (x,y)
-        });
-        match res {
-          Some(index) => BlockCheck::Object(&map.objects[index]),
+        match map.entities.iter().find( |id| {
+            let &Some(entity) = &ents[id.to_string()];
+             entity.blocks && entity.pos() == (x,y)
+        }) {
+            Some(id) => {
+                let &Some(entity) = &ents[id.to_string()];
+                BlockCheck::Entity(&entity)
+            },
           None => BlockCheck::Empty
         }
       }
@@ -86,12 +88,12 @@ impl Object {
     }
 
     /// move by the given amount, if the destination is not blocked
-    pub fn move_by(&mut self, dx: i32, dy: i32, map: &Map) -> bool {
+    pub fn move_by(&mut self, dx: i32, dy: i32, map: &Map, ents: &Manager) -> bool {
       let nx = self.x + dx;
       let ny = self.y + dy;
-      match Self::blocked(nx,ny,&map) {
+      match Self::blocked(nx,ny,&map,&ents) {
         BlockCheck::Wall(_) => false,
-        BlockCheck::Object(ref obj) => {
+        BlockCheck::Entity(ref obj) => {
           self.action(&obj);
           false
         },
@@ -102,10 +104,16 @@ impl Object {
       }
     }
 
-    fn action(&self,obj: &Object) {
+    pub fn distance_to(&self, other: &Entity) -> f32 {
+      let dx = other.x - self.x;
+      let dy = other.y - self.y;
+      ((dx.pow(2) + dy.pow(2)) as f32).sqrt()
+    }
+
+    fn action(&self,obj: &Entity) {
       match obj.kind {
         Kind::Mob => {
-          println!("The {} laughs at your puny efforts to attack him!", obj.name);
+          println!("The {} laughs at the {}s efforts to attack them!", obj.name,self.name);
         },
         _ => (),
       };

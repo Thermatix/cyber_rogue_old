@@ -1,8 +1,9 @@
 use sys::console::*;
 use sys::FovAlgorithm;
 
-use game::mapping::Map;
-use game::mapping::FovMap;
+use game::mapping::{Map,FovMap};
+
+use game::entity::Manager;
 
 const FOV_ALGO: FovAlgorithm = FovAlgorithm::Basic;
 
@@ -24,15 +25,15 @@ pub fn fov_check(map: &Map) -> FovMap {
 }
 
 
-pub fn all(root: &mut Root, con: &mut Offscreen, map: &mut Map, fov_map: &mut FovMap) {
+pub fn all(root: &mut Root, con: &mut Offscreen, map: &Map, ents: &mut Manager, fov_map: &mut FovMap) {
 
   // go through all tiles, and set their background color
-  fov_map.compute_fov(map.objects[0].x, map.objects[0].y, ::CONFIG.torch_radius, ::CONFIG.fov_light_walls,FOV_ALGO);
+  fov_map.compute_fov(ents.player.x, ents.player.y, ::CONFIG.torch_radius, ::CONFIG.fov_light_walls,FOV_ALGO);
   map.render(con, &fov_map);
 
   // draw all objects in the list
-  for object in &map.objects {
-
+  for id in &map.entities {
+    let object = &mut ents[id];
     if fov_map.is_in_fov(object.x, object.y) {
       object.draw(con);
     }
@@ -43,10 +44,9 @@ pub fn all(root: &mut Root, con: &mut Offscreen, map: &mut Map, fov_map: &mut Fo
 
 }
 
-pub fn clear_objects(map: &mut Map, con: &mut Offscreen) {
-
-  for object in &map.objects {
-      object.clear(con);
+pub fn clear_entities(map: &Map, ents: &mut Manager, con: &mut Offscreen) {
+  for id in &map.entities {
+      ents[id].clear(con);
   };
 }
 

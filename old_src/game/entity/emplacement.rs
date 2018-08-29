@@ -1,17 +1,13 @@
 use rand;
-use entity::rand::Rng;
-use entity::colors;
 
 
 
 use game::Map;
-use game::Object;
-use game::object::BlockCheck;
 use game::entity;
-use game::entity::Stats;
+use entity::{Entity, contextual::* ,rand::Rng, colors, Stats, Manager, BlockCheck};
 
 
-pub fn place_objects(map: &mut Map) {
+pub fn place_entities(map: &mut Map, ents: &Manager) {
     for room in &map.rooms {
       //choose random number of monsters
       let num_monsters = rand::thread_rng().gen_range(0, ::CONFIG.max_monsters + 1);
@@ -19,20 +15,19 @@ pub fn place_objects(map: &mut Map) {
         // chose ranomd spot for this monster
         let x = rand::thread_rng().gen_range(room.x1 + 1, room.x2);
         let y = rand::thread_rng().gen_range(room.y1 + 1, room.y2);
-        match Object::blocked(x,y,&map) {
+        match Entity::blocked(x,y,&map, &ents) {
           BlockCheck::Empty => {
-          let mut mob: Object;
-          if rand::random::<f32>() < 0.8 {// 80% chance of getting an orc
-            mob =  Object::new((x, y), '0',colors::DESATURATED_GREEN,"Orc", true, entity::Kind::Mob );
+          ents.push(if rand::random::<f32>() < 0.8 {// 80% chance of getting an orc
+            let mut mob = Entity::new((x, y), '0',colors::DESATURATED_GREEN,"Orc",Block, entity::Kind::Mob );
             mob.stats = Some(Stats{max_hp: 10, hp: 10, defense: 0, power: 3});
             mob.ai = Some(entity::Ai);
+            mob
           }  else {
-            mob = Object::new((x, y),'T', colors::DARKER_GREEN, "Goblin", true, entity::Kind::Mob);
+            let mut mob = Entity::new((x, y),'T', colors::DARKER_GREEN, "Troll",Block, entity::Kind::Mob);
             mob.stats = Some(Stats{max_hp: 16, hp: 16, defense: 1, power: 4});
             mob.ai = Some(entity::Ai);
-
-          };
-          map.objects.push(mob);
+            mob
+          });
           },
           _ => {
 

@@ -4,7 +4,18 @@ version = "0.1.0"
 authors = ["Martin Becker <mbeckerwork@gmail.com>"]
 
 [dependencies]
-tcod = "0.12"
-rand = "0.3.9"
+#config crates
+config = "0.8"
+serde_derive = "^1.0.8"
+serde = "^1.0.8"
+# utility crates
+nanoid = "0.1.3"
+
+# tcod = "0.12"
+# rand = "0.3.9"
+# specs = "0.10.0"
+
 #for ensuring ECS system communication
 # ditto = "0.2.0"
+
+

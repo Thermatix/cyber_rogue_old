@@ -1,17 +1,6 @@
-use rand;
+mod components;
 
-pub use tcod::console::*;
-pub use tcod::colors;
+mod structs;
 
-
-pub mod object;
-pub mod ai;
-pub mod stats;
-
-
-pub use self::object::Object;
-pub use self::object::Kind;
-pub use self::ai::Ai;
-pub use self::stats::Stats;
-
-pub mod emplacement;
+pub use self::structs::*;
+pub use self::components::*;

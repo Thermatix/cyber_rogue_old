@@ -4,7 +4,7 @@ use tcod::colors::Color;
 
 
 use game::mapping;
-use game::Object;
+use game::entity::Entity;
 
 use self::mapping::Tile;
 use self::mapping::Rect;
@@ -25,7 +25,7 @@ pub struct Map {
   pub width: i32,
   pub data: Grid<Tile>,
   pub rooms: Vec<Rect>,
-  pub objects: Vec<Object>,
+  pub entities: Vec<String>,
 }
 
 impl Index<usize> for Map {
@@ -50,7 +50,7 @@ impl Map {
       height: map_size.1,
       data: vec![vec![Tile::wall(); map_size.1 as usize]; map_size.0 as usize],
       rooms: vec![],
-      objects: vec![]
+      entities: vec![]
     }
   }
 
