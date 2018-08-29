@@ -18,8 +18,8 @@ mod game;
 fn main() {
 
 //  intialize
-    let settings = utility::config::Settings::new("config.toml".to_string());
-    let manager = sys::entity_manager::Manager::new();
+    let settings = utility::config::Settings::new("config.toml");
+    let manager = sys::EntityManager::new();
     //
 
 

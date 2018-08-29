@@ -34,7 +34,7 @@ impl<'m, Comp: Component<'m>> Manager<'m, Comp> {
         }
     }
 
-    /// Create entity of "kind" at Some("location") and add to manager
+    /// Create entity and return it's "ID"
     pub fn create(&mut self) -> Option<ID> {
         let id: ID = self.generate_id();
         let entity: Entity = Entity::new(id.clone());
