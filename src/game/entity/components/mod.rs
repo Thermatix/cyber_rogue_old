@@ -1,5 +1,17 @@
-mod component_base;
 mod simple;
 
-pub use self::component_base::*;
+use sys::entity_manager::ComponentId;
+
 pub use self::simple::*;
+
+pub trait Component {}
+
+pub trait ComponentFields {
+
+    type ValueType;
+
+    fn new(value: Self::ValueType) -> Self;
+
+    fn update(&mut self, value: Self::ValueType);
+
+}

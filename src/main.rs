@@ -11,6 +11,8 @@ mod utility;
 mod sys;
 mod game;
 
+use game::entity::Component;
+
 
 
 
@@ -19,7 +21,7 @@ fn main() {
 
 //  intialize
     let settings = utility::config::Settings::new("config.toml");
-    let manager = sys::EntityManager::new();
+    let manager: sys::EntityManager<Box<Component>> = sys::EntityManager::new();
     //
 
 

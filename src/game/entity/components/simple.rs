@@ -1,14 +1,14 @@
+use super::ComponentFields;
 use super::Component;
 
 type Point = (i32, i32);
 
-pub struct Name{
+pub struct Name {
     pub value: String,
 }
+impl Component for Name {}
+impl ComponentFields for Name {
 
-impl<'c> Component <'c> for Name {
-
-    const IDName: &'c str = "name";
     type ValueType = String;
 
     fn new(value: String) -> Self {
@@ -27,9 +27,9 @@ pub struct  Kind {
     pub value: String,
 }
 
-impl<'c> Component <'c> for  Kind{
+impl Component for Kind {}
+impl ComponentFields for Kind {
 
-    const IDName: &'c str = "kind";
     type ValueType = String;
 
     fn new(value: Self::ValueType) -> Self {
@@ -48,9 +48,9 @@ pub struct  Location {
     pub value: String,
 }
 
-impl<'c> Component <'c> for  Location{
+impl Component for Location {}
+impl ComponentFields  for  Location {
 
-    const IDName: &'c str = "location";
     type ValueType = String;
 
     fn new(value: Self::ValueType) -> Self {
@@ -71,9 +71,9 @@ pub struct  Position {
     pub y: i32,
 }
 
-impl<'c> Component <'c> for  Position{
+impl Component for Position {}
+impl ComponentFields for Position {
 
-    const IDName: &'c str = "position";
     type ValueType = Point;
 
     fn new(value: Self::ValueType) -> Self {
