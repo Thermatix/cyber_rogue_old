@@ -1,6 +1,8 @@
 use super::ComponentFields;
 use super::Component;
 
+use std::ops::AddAssign;
+
 type Point = (i32, i32);
 
 pub struct Name {
@@ -88,5 +90,27 @@ impl ComponentFields for Position {
         self.y = value.1;
     }
 
+}
+
+impl AddAssign for Position {
+
+    fn add_assign(&mut self, other: Position) {
+        *self = Position {
+            x: self.x + other.x,
+            y: self.y + other.y
+        }
+    }
+}
+
+impl Position {
+
+    fn move_to(&mut self, value: Point) {
+        self.x = value.0;
+        self.y = value.1;
+    }
+
+    fn to_point(&self) -> Point {
+        (self.x, self.y)
+    }
 
 }

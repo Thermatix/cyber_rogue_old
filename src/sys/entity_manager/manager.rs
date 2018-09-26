@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use std::ops::{Index, IndexMut};
-use std::marker::PhantomData;
 use std::any::TypeId;
 use nanoid;
 
@@ -92,4 +91,3 @@ impl<Comp: Component> IndexMut<ID> for Manager<Comp> {
         self.entities.get_mut(&id).unwrap()
     }
 }
-
