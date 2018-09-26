@@ -10,7 +10,7 @@ pub struct Storage<Component> {
 }
 
 impl<Comp> Storage<Comp>
-where Comp: Component
+where Comp: Component+'static
 {
 
     /// Returns a New Component Storage

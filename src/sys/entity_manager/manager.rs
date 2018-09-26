@@ -21,7 +21,7 @@ pub struct ComponentId(pub TypeId);
 impl ComponentId {
 
     /// Creates a new resource id from a given type.
-    pub fn new<'c, C: Component+'c>() -> Self {
+    pub fn new<'c, C: Component+'static>() -> Self {
         ComponentId(TypeId::of::<C>())
     }
 }
@@ -34,7 +34,7 @@ pub struct Manager< Comp>
 }
 
 
-impl< Comp: Component> Manager<Comp> {
+impl< Comp: Component+'static> Manager<Comp> {
     pub fn new() -> Self {
         Self {
             entities: Entities::new(),
