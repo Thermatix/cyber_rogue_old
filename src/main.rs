@@ -7,6 +7,8 @@ extern crate nanoid;
 #[macro_use]
 extern crate serde_derive;
 
+extern crate typemap;
+
 mod utility;
 mod sys;
 mod game;

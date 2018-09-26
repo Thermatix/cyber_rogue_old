@@ -3,13 +3,14 @@ use std::ops::{Index, IndexMut};
 use game::entity::Component;
 
 pub type ID = String;
-pub type Components<Component> = HashMap<ID, Component>;
+pub type Components<Comp: Component> = HashMap<ID, Comp>;
 
+#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Storage<Component> {
     components: Components<Box<Component>>,
 }
 
-impl<Comp> Storage<Comp>
+impl<Comp: Component> Storage<Comp>
 where Comp: Component+'static
 {
 

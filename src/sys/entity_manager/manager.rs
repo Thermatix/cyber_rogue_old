@@ -9,32 +9,34 @@ use game::entity::{Component, ComponentFields} ;
 use super::storage::ID;
 use super::Storage;
 
+use typemap::{TypeMap, Key};
+
 const DELIMIT: char = '.';
 const ID_LEN: usize = 15;
 
-type EntityComponents<Comp> = HashMap<ComponentId, Storage<Comp>>;
+type EntityComponents = TypeMap;
 type Entities = HashMap<ID,Entity>;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub struct ComponentId(pub TypeId);
+pub struct ComponentId<Comp>;
 
-impl ComponentId {
+impl<Comp: Component> Key for ComponentId<Comp>  {
+    type Value = Storage<Comp>;
+}
 
-    /// Creates a new resource id from a given type.
-    pub fn new<'c, C: Component+'static>() -> Self {
-        ComponentId(TypeId::of::<C>())
+impl<Comp: Component> ComponentId<Comp> {
+    fn new() -> Self {
+        Self {}
     }
 }
 
-pub struct Manager< Comp>
-    where Comp: Component
-    {
+pub struct Manager {
     pub entities: Entities,
-    pub components: EntityComponents<Comp>,
+    pub components: EntityComponents,
 }
 
 
-impl< Comp: Component+'static> Manager<Comp> {
+impl Manager {
     pub fn new() -> Self {
         Self {
             entities: Entities::new(),
@@ -53,14 +55,14 @@ impl< Comp: Component+'static> Manager<Comp> {
 
     /// add a <struct that impliments component> to a given entity 'id' with initial_value of
     /// component::valuetype
-    pub fn add_component(&mut self, id: ID, initial_value: Comp::ValueType)
+    pub fn add_component< Comp: Component+'static>(&mut self, id: ID, initial_value: Comp::ValueType)
     where Comp: Component + ComponentFields
     {
-            let comp_type = ComponentId::new::<Comp>();
-            if !self.components.contains_key(&comp_type) {
-                self.components.insert(comp_type.clone(), Storage::new());
+            let comp_storage: Storage<Comp> = Storage::new();
+            if !self.components.contains::<ComponentId<Comp>>() {
+                self.components.insert::<ComponentId<Comp>>(comp_storage);
             }
-            self.components[&comp_type].insert(id.clone(), Comp::new(initial_value));
+            self.components.get_mut::<ComponentId<Comp>>().unwrap().insert(id.clone(), Comp::new(initial_value));
     }
 
 
@@ -74,7 +76,7 @@ impl< Comp: Component+'static> Manager<Comp> {
     }
 }
 
-impl<Comp: Component> Index<ID> for Manager<Comp> {
+impl Index<ID> for Manager {
 
     type Output = Entity;
 
@@ -84,7 +86,7 @@ impl<Comp: Component> Index<ID> for Manager<Comp> {
     }
 }
 
-impl<Comp: Component> IndexMut<ID> for Manager<Comp> {
+impl IndexMut<ID> for Manager {
 
     /// Returns a mutable reference to an entity for a given 'id'
     fn index_mut(&mut self, id: ID) -> &mut Entity {
