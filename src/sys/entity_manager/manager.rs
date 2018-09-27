@@ -57,7 +57,7 @@ impl Manager {
 
     /// add a <struct that impliments component> to a given entity 'id' with initial_value of
     /// component::valuetype
-    pub fn add_component< Comp: Component+'static>(&mut self, id: ID, initial_value: Comp::ValueType)
+    pub fn add_component<Comp: Component+'static>(&mut self, id: ID, initial_value: Comp::ValueType)
     where Comp: Component + ComponentFields
     {
             let comp_storage: Storage<Comp> = Storage::new();
@@ -67,6 +67,19 @@ impl Manager {
             self.components.get_mut::<ComponentId<Comp>>().unwrap().insert(id.clone(), Comp::new(initial_value));
     }
 
+    pub fn get_component<Comp: Component+'static>(&self, id: ID) -> Option<& impl Component> {
+        match self.components.get::<ComponentId<Comp>>() {
+            Some(storage) => Some(&storage[id]),
+            None => None
+        }
+    }
+
+    pub fn get_mut_component<Comp: Component+'static>(&mut self, id: ID) -> Option<&mut impl Component> {
+        match self.components.get_mut::<ComponentId<Comp>>() {
+            Some(storage) => Some(&mut storage[id]),
+            None => None
+        }
+    }
 
     /// Generate new id that doesn't exist
     fn generate_id(&self) -> ID{
