@@ -114,3 +114,19 @@ impl Position {
     }
 
 }
+
+struct Char { value: char }
+
+impl Component for Char {}
+impl ComponentFields for Char {
+    type ValueType = char;
+
+    fn new(value: Self::ValueType) -> Self {
+        Self { value }
+    }
+
+    fn update(&mut self, value: Self::ValueType) {
+        self.value = value;
+    }
+
+}
