@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::ops::{Index, IndexMut};
-use std::any::TypeId;
+use std::marker::PhantomData;
 use nanoid;
 
 
@@ -18,15 +18,17 @@ type EntityComponents = TypeMap;
 type Entities = HashMap<ID,Entity>;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub struct ComponentId<Comp>;
+pub struct ComponentId<Comp: Component> {
+    _phantom: PhantomData<Comp>
+}
 
-impl<Comp: Component> Key for ComponentId<Comp>  {
+impl<Comp: Component+'static> Key for ComponentId<Comp>  {
     type Value = Storage<Comp>;
 }
 
-impl<Comp: Component> ComponentId<Comp> {
+impl<Comp: Component+'static> ComponentId<Comp> {
     fn new() -> Self {
-        Self {}
+        Self {_phantom: PhantomData }
     }
 }
 

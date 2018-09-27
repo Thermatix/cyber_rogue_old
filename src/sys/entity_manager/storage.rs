@@ -5,7 +5,7 @@ use game::entity::Component;
 pub type ID = String;
 pub type Components<Comp: Component> = HashMap<ID, Comp>;
 
-#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+// #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Storage<Component> {
     components: Components<Box<Component>>,
 }
@@ -22,7 +22,7 @@ where Comp: Component+'static
         }
     }
 
-    pub fn insert(&self, id: ID, comp: Comp) {
+    pub fn insert(&mut self, id: ID, comp: Comp) {
         self.components.insert(id, Box::new(comp));
     }
 }
