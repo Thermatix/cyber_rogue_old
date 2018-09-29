@@ -1,0 +1,26 @@
+---
+example:
+  feature_packs:
+    - example
+    - example
+  components:
+    - component: char
+      initial_value:
+        char: T
+    - component: string
+      initial_value:
+        string: 'asdasdasd'
+    - component: int
+      initial_value:
+        int: 2
+    - component: float
+      initial_value:
+        float: 3.2
+    - component: bool
+      initial_value:
+        bool: true
+    - component: range
+      initial_value:
+        range:
+          start: 0
+          end: 9

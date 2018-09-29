@@ -5,11 +5,13 @@ orc:
     - basic_identifiers_mob
   components:
     - component: char
-      initial_value: T
+      initial_value:
+        char: T
 goblin:
   feature_packs:
     - physical
     - basic_identifiers_mob
   components:
     - component: char
-      initial_value: t
+      initial_value:
+        char: t

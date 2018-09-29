@@ -17,8 +17,10 @@ mod game;
 fn main() {
 
 //  intialize
-    let settings = utility::config::Settings::new("config.toml");
+    let settings = utility::config::Settings::new("config.toml").unwrap();
     let manager = sys::EntityManager::new();
+    let template_manager = sys::TemplateManager::new("data/entities/templates/");
+    println!("{:?}", template_manager);
 
 
     //
