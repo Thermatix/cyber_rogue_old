@@ -2,7 +2,7 @@ use std::fs;
 use std::ops::Range;
 use std::collections::HashMap;
 
-use serde::Deserializer;
+// use serde::Deserializer;
 use config_rs::{ConfigError, Config, File};
 
 #[allow(non_camel_case_types)]
