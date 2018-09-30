@@ -5,22 +5,20 @@ example:
     - example
   components:
     - component: char
-      initial_value:
-        char: T
+      initial_value: T
     - component: string
-      initial_value:
-        string: 'asdasdasd'
+      initial_value: 'asdasdasd'
     - component: int
-      initial_value:
-        int: 2
+      initial_value: 2
     - component: float
-      initial_value:
-        float: 3.2
+      initial_value: 3.2
     - component: bool
-      initial_value:
-        bool: true
+      initial_value: true
     - component: range
       initial_value:
-        range:
-          start: 0
-          end: 9
+        start: 0
+        end: 9
+    - component: range
+      initial_value:
+        - 0
+        - 9
