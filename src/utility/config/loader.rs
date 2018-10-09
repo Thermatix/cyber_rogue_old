@@ -1,36 +1,50 @@
 use config_rs::{ConfigError, Config, File};
 
 #[derive(Debug, Deserialize)]
- struct Engine {
-     screen_width: i32,
-     screen_height: i32,
-     fps_limit: i32,
+ pub struct Engine {
+     pub screen_width: i32,
+     pub screen_height: i32,
+     pub fps_limit: i32,
 }
 
 #[derive(Debug, Deserialize)]
- struct Lighting {
-     fov_light_walls: bool,
-     torch_radius: i32,
+ pub struct Lighting {
+     pub fov_light_walls: bool,
+     pub torch_radius: i32,
 }
 
 #[derive(Debug, Deserialize)]
- struct Rooms {
-     room_min_size: i32,
-     room_max_size: i32,
-     room_max_no: i32,
+pub  struct Rooms {
+     pub room_min_size: i32,
+     pub room_max_size: i32,
+     pub room_max_no: i32,
 }
 
 #[derive(Debug, Deserialize)]
- struct Monsters {
-     max_monsters: i32,
+ pub struct Monsters {
+     pub max_monsters: i32,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Entities {
+    pub templates: String,
+    pub lists: String,
+    pub feature_packs: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Directories {
+    pub data: String,
+    pub entities: Entities
 }
 
 #[derive(Debug, Deserialize)]
  pub struct Settings {
-     engine: Engine,
-     lighting: Lighting,
-     rooms: Rooms,
-     monsters: Monsters,
+     pub engine: Engine,
+     pub lighting: Lighting,
+     pub rooms: Rooms,
+     pub monsters: Monsters,
+     pub dirs: Directories,
 }
 
 impl Settings {

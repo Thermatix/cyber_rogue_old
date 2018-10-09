@@ -19,7 +19,7 @@ fn main() {
 //  intialize
     let settings = utility::config::Settings::new("config.toml").unwrap();
     let manager = sys::EntityManager::new();
-    let template_manager = sys::TemplateManager::new("data/entities/templates/");
+    let template_manager = sys::TemplateManager::new(&settings);
     println!("{:?}", template_manager);
 
 

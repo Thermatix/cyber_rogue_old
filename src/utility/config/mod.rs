@@ -1,3 +1,3 @@
-mod loader;
+pub mod loader;
 
 pub use self::loader::Settings;

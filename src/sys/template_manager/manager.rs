@@ -3,8 +3,12 @@ use std::ops::Range;
 use std::collections::HashMap;
 use std::ops::{Index};
 
+use ::utility::{config::Settings, config::loader::Directories, list};
+
 // use serde::Deserializer;
 use config_rs::{ConfigError, Config, File};
+
+
 
 #[derive(Debug, Deserialize)]
 #[serde(
@@ -17,15 +21,16 @@ pub enum InitialValue {
     Int(i32),
     Float(f32),
     Bool(bool),
-    Range(Range<i32>)
+    Range(Range<i32>),
+    Point((i32,i32))
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Component {
     component: String,
-    initial_value: InitialValue,
+    #[serde(default)]
+    initial_value: Option<InitialValue>,
 }
-
 
 #[derive(Debug, Deserialize)]
 pub struct Template {
@@ -47,23 +52,81 @@ pub struct Templates {
 impl Templates {
     /// For a given file load and parse the data into a list of templates
     pub fn new(file: &str) -> Result<Self, ConfigError> {
-        let mut  templates = Config::new();
+        let mut templates = Config::new();
         templates.merge(File::with_name(file)).unwrap();
         templates.try_into()
+    }
+}
+
+#[derive(Debug, Deserialize)]
+pub struct FeaturePacks {
+    #[serde(flatten)]
+    packs: HashMap<String, Vec<Component>>
+}
+
+impl FeaturePacks {
+    pub fn new(dirs: &Directories) -> Result<Self, ConfigError> {
+        let mut feature_packs = Config::new();
+        feature_packs
+            .merge(File::with_name(&format!("{}{}", &dirs.data, &dirs.entities.feature_packs)))
+            .unwrap();
+        feature_packs.try_into()
+    }
+}
+
+
+//                            Category     List Name   list of strings
+type ListCategories = HashMap<String,HashMap<String ,Vec<String>>>;
+
+#[derive(Debug, Deserialize)]
+pub struct Lists {
+    categories: ListCategories,
+}
+
+impl Lists {
+    pub fn new(dirs: &Directories) -> Self {
+        let mut lists = Self { categories: ListCategories::new() };
+        println!("{}{}", &dirs.data, &dirs.entities.lists);
+        'categories: for raw_dir in fs::read_dir(&format!("{}{}", &dirs.data, &dirs.entities.lists)).unwrap() {
+            let dir = raw_dir.unwrap().path();
+            let mut category = HashMap::new();
+            'lists: for raw_file in fs::read_dir(&dir).unwrap() {
+                let file = raw_file.unwrap().path();
+                category.insert( file.clone().file_stem().unwrap().to_str().unwrap().to_owned(), list::from_file(file).unwrap());
+            }
+
+            lists.categories.insert(dir.file_stem().unwrap().to_str().unwrap().to_owned(), category);
+
+        }
+        lists
     }
 }
 
 #[derive(Debug)]
 pub struct Manager {
     pub template_types: HashMap<Type,Templates>,
+    pub feature_packs: FeaturePacks,
+    pub lists: Lists,
 }
 
 impl Manager {
     /// For a given directory, itterate over files and load in the templates
     /// and return a Template maanger
-    pub fn new(dir: &str) -> Self {
-        let mut manager = Self { template_types: HashMap::new() };
-        'paths: for raw_path in fs::read_dir(dir).unwrap() {
+    pub fn new(config: &Settings) -> Self {
+        let feature_packs =
+            match FeaturePacks::new(&config.dirs) {
+                Ok(fp) => fp,
+                Err(message) => {
+                    display_template_error(&format!("{},{}", &config.dirs.data, &config.dirs.entities.feature_packs), message.to_string());
+                    panic!()
+                }
+            };
+        let mut manager = Self {
+            template_types: HashMap::new(),
+            feature_packs: feature_packs ,
+            lists: Lists::new(&config.dirs)
+        };
+        'template_types: for raw_path in fs::read_dir(&format!("{}{}", &config.dirs.data, &config.dirs.entities.templates)).unwrap() {
             let path = raw_path.unwrap().path();
             let file_path = path.clone();
             let type_name = path.clone();
@@ -71,8 +134,8 @@ impl Manager {
                 match Templates::new(type_name.to_str().unwrap()) {
                     Ok(templates) => templates,
                     Err(message) => {
-                        println!("TemplateManager: file({:?}), {}", &file_path, message);
-                        continue 'paths
+                        display_template_error(file_path.clone().to_str().unwrap(), message.to_string());
+                        continue 'template_types
                     },
                 };
             manager.template_types.insert(file_path.file_stem().unwrap().to_str().unwrap().to_owned(), templates);
@@ -99,4 +162,8 @@ impl Index<Name> for Templates {
         &self.templates[&name]
     }
 
+}
+
+fn display_template_error(file: &str, message: String) {
+    println!("TemplateManager: file({:?}), {}", file, message)
 }
