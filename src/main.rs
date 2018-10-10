@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 //config crates
 extern crate config as config_rs;
 extern crate serde;
@@ -7,6 +8,7 @@ extern crate nanoid;
 #[macro_use]
 extern crate serde_derive;
 
+// sys crates
 extern crate typemap;
 
 mod utility;

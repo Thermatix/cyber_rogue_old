@@ -8,8 +8,6 @@ use ::utility::{config::Settings, config::loader::Directories, list};
 // use serde::Deserializer;
 use config_rs::{ConfigError, Config, File};
 
-
-
 #[derive(Debug, Deserialize)]
 #[serde(
     rename_all = "lowercase",
@@ -23,6 +21,59 @@ pub enum InitialValue {
     Bool(bool),
     Range(Range<i32>),
     Point((i32,i32))
+}
+
+
+impl InitialValue {
+
+    pub fn unwrap_char(&self) -> &char {
+        match &self {
+            InitialValue::Char(val) => val,
+            _ => panic!("Stored value does not match unwrap type")
+        }
+    }
+
+    pub fn unwrap_string(&self) -> &String {
+        match &self {
+            InitialValue::String(val) => val,
+            _ => panic!("Stored value does not match unwrap type")
+        }
+    }
+
+    pub fn unwrap_int(&self) -> &i32 {
+        match &self {
+            InitialValue::Int(val) => val,
+            _ => panic!("Stored value does not match unwrap type")
+        }
+    }
+
+    pub fn unwrap_float(&self) -> &f32 {
+        match &self {
+            InitialValue::Float(val) => val,
+            _ => panic!("Stored value does not match unwrap type")
+        }
+    }
+
+    pub fn unwrap_bool(&self) -> &bool {
+        match &self {
+            InitialValue::Bool(val) => val,
+            _ => panic!("Stored value does not match unwrap type")
+        }
+    }
+
+    pub fn unwrap_range(&self) -> &Range<i32> {
+        match &self {
+            InitialValue::Range(val) => val,
+            _ => panic!("Stored value does not match unwrap type")
+        }
+    }
+
+    pub fn unwrap_point(&self) -> &(i32, i32) {
+        match &self {
+            InitialValue::Point(val) => val,
+            _ => panic!("Stored value does not match unwrap type")
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]
