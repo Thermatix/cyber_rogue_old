@@ -83,30 +83,27 @@ pub struct Lists {
     categories: ListCategories,
 }
 
-impl Lists {
-    pub fn new(dirs: &Directories) -> Self {
-        let mut lists = Self { categories: ListCategories::new() };
-        println!("{}{}", &dirs.data, &dirs.entities.lists);
-        'categories: for raw_dir in fs::read_dir(&format!("{}{}", &dirs.data, &dirs.entities.lists)).unwrap() {
-            let dir = raw_dir.unwrap().path();
-            let mut category = HashMap::new();
-            'lists: for raw_file in fs::read_dir(&dir).unwrap() {
-                let file = raw_file.unwrap().path();
-                category.insert( file.clone().file_stem().unwrap().to_str().unwrap().to_owned(), list::from_file(file).unwrap());
-            }
-
-            lists.categories.insert(dir.file_stem().unwrap().to_str().unwrap().to_owned(), category);
-
+fn load_lists( list_dir: &str) -> ListCategories {
+    let mut categories = ListCategories::new();
+    'categories: for raw_dir in fs::read_dir(list_dir).unwrap() {
+        let dir = raw_dir.unwrap().path();
+        let mut category = HashMap::new();
+        'lists: for raw_file in fs::read_dir(&dir).unwrap() {
+            let file = raw_file.unwrap().path();
+            category.insert( file.clone().file_stem().unwrap().to_str().unwrap().to_owned(), list::from_file(file).unwrap());
         }
-        lists
+
+        categories.insert(dir.file_stem().unwrap().to_str().unwrap().to_owned(), category);
+
     }
+    categories
 }
 
 #[derive(Debug)]
 pub struct Manager {
     pub template_types: HashMap<Type,Templates>,
     pub feature_packs: FeaturePacks,
-    pub lists: Lists,
+    pub lists: ListCategories,
 }
 
 impl Manager {
@@ -124,8 +121,9 @@ impl Manager {
         let mut manager = Self {
             template_types: HashMap::new(),
             feature_packs: feature_packs ,
-            lists: Lists::new(&config.dirs)
+            lists: load_lists(&format!("{}{}", &config.dirs.data, &config.dirs.entities.lists))
         };
+
         'template_types: for raw_path in fs::read_dir(&format!("{}{}", &config.dirs.data, &config.dirs.entities.templates)).unwrap() {
             let path = raw_path.unwrap().path();
             let file_path = path.clone();
