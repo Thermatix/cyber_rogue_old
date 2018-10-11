@@ -89,6 +89,13 @@ impl Manager {
         };
         id
     }
+
+    fn build(&mut self, entity_type: String, template_name: String, data_manager: &::sys::DataManager ) {
+        let template = &data_manager.template_types[&entity_type][template_name];
+        let id = self.create();
+
+
+    }
 }
 
 impl Index<ID> for Manager {

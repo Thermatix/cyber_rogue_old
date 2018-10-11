@@ -1,5 +1,4 @@
-
-use sys::TemplateManager;
+use sys::DataManager;
 use sys::EntityManager;
 use game::entity::Entity;
 
@@ -12,7 +11,7 @@ pub struct Builder {
 
 impl Builder {
 
-    pub fn new(t_manager: TemplateManager, e_manager: EntityManager) -> Self {
+    pub fn new() -> Self {
         Self {
             t_manager,
             e_manager
