@@ -1,5 +1,5 @@
-use super::ComponentFields;
 use super::Component;
+// use super::ComponentFields;
 
 use std::ops::AddAssign;
 
@@ -8,8 +8,8 @@ type Point = (i32, i32);
 pub struct Name {
     pub value: String,
 }
-impl Component for Name {}
-impl ComponentFields for Name {
+// impl Component for Name {}
+impl Component for Name {
 
     type ValueType = String;
 
@@ -29,8 +29,8 @@ pub struct  Kind {
     pub value: String,
 }
 
-impl Component for Kind {}
-impl ComponentFields for Kind {
+// impl Component for Kind {}
+impl Component for Kind {
 
     type ValueType = String;
 
@@ -50,8 +50,8 @@ pub struct  Location {
     pub value: String,
 }
 
-impl Component for Location {}
-impl ComponentFields  for  Location {
+// impl Component for Location {}
+impl Component  for  Location {
 
     type ValueType = String;
 
@@ -73,8 +73,8 @@ pub struct  Position {
     pub y: i32,
 }
 
-impl Component for Position {}
-impl ComponentFields for Position {
+// impl Component for Position {}
+impl Component for Position {
 
     type ValueType = Point;
 
@@ -117,8 +117,8 @@ impl Position {
 
 struct Char { value: char }
 
-impl Component for Char {}
-impl ComponentFields for Char {
+// impl Component for Char {}
+impl Component for Char {
     type ValueType = char;
 
     fn new(value: Self::ValueType) -> Self {

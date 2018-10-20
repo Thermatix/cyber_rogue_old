@@ -5,7 +5,7 @@ use nanoid;
 
 
 use game::entity::Entity;
-use game::entity::{Component, ComponentFields} ;
+use game::entity::Component;
 use super::storage::ID;
 use super::Storage;
 
@@ -58,7 +58,7 @@ impl Manager {
     /// add a <struct that impliments component> to a given entity 'id' with initial_value of
     /// component::valuetype
     pub fn add_component<Comp: Component+'static>(&mut self, id: ID, initial_value: Comp::ValueType)
-    where Comp: Component + ComponentFields
+    where Comp: Component
     {
             let comp_storage: Storage<Comp> = Storage::new();
             if !self.components.contains::<ComponentId<Comp>>() {

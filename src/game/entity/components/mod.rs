@@ -2,9 +2,10 @@ mod simple;
 
 pub use self::simple::*;
 
-pub trait Component {}
+// pub trait Component {}
 
-pub trait ComponentFields {
+// pub trait ComponentFields {
+pub trait Component {
 
     type ValueType;
 
