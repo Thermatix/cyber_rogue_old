@@ -1,4 +1,4 @@
-use config_rs::{ConfigError, Config, File};
+use crate::config_rs::{ConfigError, Config, File};
 
 #[derive(Debug, Deserialize)]
  pub struct Engine {
@@ -27,7 +27,7 @@ pub  struct Rooms {
 
 #[derive(Debug, Deserialize)]
 pub struct Entities {
-    pub templates: String,
+    pub prototypes: String,
     pub lists: String,
     pub feature_packs: String,
 }

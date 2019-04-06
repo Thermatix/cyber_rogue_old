@@ -20,7 +20,7 @@ fn main() {
 
 //  intialize
     let settings = utility::config::Settings::new("config.toml").unwrap();
-    let manager = sys::EntityManager::new();
+    // let manager = sys::EntityManager::new();
     let data_manager = sys::DataManager::new(&settings);
     println!("{:?}", data_manager);
 

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::ops::{Index, IndexMut};
-use game::entity::Component;
+use crate::game::entity::Component;
 
 pub type ID = String;
 pub type Components<Comp: Component> = HashMap<ID, Comp>;

@@ -1,10 +1,13 @@
+use std::ops::AddAssign;
+
+// use serde::{Serialize, Deserialize};
+
 use super::Component;
 // use super::ComponentFields;
 
-use std::ops::AddAssign;
-
 type Point = (i32, i32);
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Name {
     pub value: String,
 }
@@ -25,6 +28,7 @@ impl Component for Name {
 
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct  Kind {
     pub value: String,
 }
@@ -46,6 +50,7 @@ impl Component for Kind {
 
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct  Location {
     pub value: String,
 }
@@ -68,28 +73,44 @@ impl Component  for  Location {
 }
 
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct  Position {
+    #[serde(default)]
     pub x: i32,
+    #[serde(default)]
     pub y: i32,
 }
+
 
 // impl Component for Position {}
 impl Component for Position {
 
-    type ValueType = Point;
+    type ValueType = Option<Point>;
 
     fn new(value: Self::ValueType) -> Self {
-        Self {
-            x: value.0,
-            y: value.1,
+        match value {
+            Some(v) => Self { x: v.0, y: v.1 },
+            None => Self { ..Default::default() }
         }
     }
 
     fn update(&mut self, value: Self::ValueType) {
-        self.x = value.0;
-        self.y = value.1;
+        match value {
+            Some(v) =>  {
+                self.x = v.0;
+                self.y = v.1;
+            }
+            None => ()
+        }
     }
 
+}
+
+impl Default for Position {
+
+    fn default() -> Self {
+        Self { x: 0, y: 0 }
+    }
 }
 
 impl AddAssign for Position {
@@ -115,7 +136,8 @@ impl Position {
 
 }
 
-struct Char { value: char }
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Char { value: char }
 
 // impl Component for Char {}
 impl Component for Char {

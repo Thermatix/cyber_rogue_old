@@ -4,4 +4,5 @@ mod data_manager;
 
 pub use self::entity_manager::Manager as EntityManager;
 pub use self::data_manager::Manager as DataManager;
+// pub use self::data_manager::InitialValue;
 // pub use self::entity_builder::Builder;

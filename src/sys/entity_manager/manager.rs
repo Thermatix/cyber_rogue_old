@@ -4,8 +4,8 @@ use std::marker::PhantomData;
 use nanoid;
 
 
-use game::entity::Entity;
-use game::entity::Component;
+use crate::game::entity::Entity;
+use crate::game::entity::Component;
 use super::storage::ID;
 use super::Storage;
 
@@ -90,9 +90,9 @@ impl Manager {
         id
     }
 
-    fn build(&mut self, entity_type: String, template_name: String, data_manager: &::sys::DataManager ) {
-        let template = &data_manager.template_types[&entity_type][template_name];
-        let id = self.create();
+    fn build(&mut self, entity_type: String, prototype_name: String, data_manager: &crate::sys::DataManager ) {
+        let _prototype = &data_manager.prototypes[&entity_type][prototype_name];
+        let _id = self.create();
 
 
     }

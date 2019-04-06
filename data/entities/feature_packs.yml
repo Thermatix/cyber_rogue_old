@@ -1,9 +1,10 @@
 ---
 basic_identifiers_mob:
   - component: name
-    initial_value: list
+    value: list
   - component: kind
-    initial_value: mob
+    value: mob
 physical:
   - component: location
+    value: list
   - component: position

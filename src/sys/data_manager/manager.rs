@@ -3,90 +3,119 @@ use std::ops::Range;
 use std::collections::HashMap;
 use std::ops::{Index};
 
-use ::utility::{config::Settings, config::loader::Directories, list};
+use crate::utility::{config::Settings, config::loader::Directories, list};
 
 // use serde::Deserializer;
-use config_rs::{ConfigError, Config, File};
+use crate::config_rs::{ConfigError, Config, File};
 
-#[derive(Debug, Deserialize)]
+use game::entity::*;
+
+// #[derive(Debug, Serialize, Deserialize)]
+// #[serde(
+//     rename_all = "lowercase",
+//     untagged
+// )]
+// pub enum InitialValue {
+//     Char(char),
+//     String(String),
+//     Int(i32),
+//     Float(f32),
+//     Bool(bool),
+//     Range(Range<i32>),
+//     Point((i32,i32))
+// }
+
+// impl InitialValue {
+//
+//     pub fn unwrap_char(&self) -> &char {
+//         match &self {
+//             InitialValue::Char(val) => val,
+//             _ => panic!("Stored value does not match unwrap type")
+//         }
+//     }
+//
+//     pub fn unwrap_string(&self) -> &String {
+//         match &self {
+//             InitialValue::String(val) => val,
+//             _ => panic!("Stored value does not match unwrap type")
+//         }
+//     }
+//
+//     pub fn unwrap_int(&self) -> &i32 {
+//         match &self {
+//             InitialValue::Int(val) => val,
+//             _ => panic!("Stored value does not match unwrap type")
+//         }
+//     }
+//
+//     pub fn unwrap_float(&self) -> &f32 {
+//         match &self {
+//             InitialValue::Float(val) => val,
+//             _ => panic!("Stored value does not match unwrap type")
+//         }
+//     }
+//
+//     pub fn unwrap_bool(&self) -> &bool {
+//         match &self {
+//             InitialValue::Bool(val) => val,
+//             _ => panic!("Stored value does not match unwrap type")
+//         }
+//     }
+//
+//     pub fn unwrap_range(&self) -> &Range<i32> {
+//         match &self {
+//             InitialValue::Range(val) => val,
+//             _ => panic!("Stored value does not match unwrap type")
+//         }
+//     }
+//
+//     pub fn unwrap_point(&self) -> &(i32, i32) {
+//         match &self {
+//             InitialValue::Point(val) => val,
+//             _ => panic!("Stored value does not match unwrap type")
+//         }
+//     }
+// }
+
+// #[derive(Debug, Deserialize)]
+// pub struct Component {
+//     #[serde(rename="component")]
+//     name: String,
+//     #[serde(default)]
+//     initial_value: Option<InitialValue>,
+// }
+
+#[derive(Debug, Serialize, Deserialize)]
 #[serde(
     rename_all = "lowercase",
-    untagged
+    tag="component"
 )]
-pub enum InitialValue {
-    Char(char),
-    String(String),
-    Int(i32),
-    Float(f32),
-    Bool(bool),
-    Range(Range<i32>),
-    Point((i32,i32))
+pub enum Feature {
+    Char        {
+        value: <Char as Component>::ValueType
+    },
+    Kind        {
+        value: <Kind as Component>::ValueType
+    },
+    Location    {
+        value: <Location as Component>::ValueType
+    },
+    // TODO: figure out why this is not working?
+    // Name        { value: <Name as Component>::ValueType },
+    Name        {
+        value: String
+    },
+    Position    {
+        value: <Position as Component>::ValueType
+    },
 }
 
+type Features = Vec<Feature>;
 
-impl InitialValue {
-
-    pub fn unwrap_char(&self) -> &char {
-        match &self {
-            InitialValue::Char(val) => val,
-            _ => panic!("Stored value does not match unwrap type")
-        }
-    }
-
-    pub fn unwrap_string(&self) -> &String {
-        match &self {
-            InitialValue::String(val) => val,
-            _ => panic!("Stored value does not match unwrap type")
-        }
-    }
-
-    pub fn unwrap_int(&self) -> &i32 {
-        match &self {
-            InitialValue::Int(val) => val,
-            _ => panic!("Stored value does not match unwrap type")
-        }
-    }
-
-    pub fn unwrap_float(&self) -> &f32 {
-        match &self {
-            InitialValue::Float(val) => val,
-            _ => panic!("Stored value does not match unwrap type")
-        }
-    }
-
-    pub fn unwrap_bool(&self) -> &bool {
-        match &self {
-            InitialValue::Bool(val) => val,
-            _ => panic!("Stored value does not match unwrap type")
-        }
-    }
-
-    pub fn unwrap_range(&self) -> &Range<i32> {
-        match &self {
-            InitialValue::Range(val) => val,
-            _ => panic!("Stored value does not match unwrap type")
-        }
-    }
-
-    pub fn unwrap_point(&self) -> &(i32, i32) {
-        match &self {
-            InitialValue::Point(val) => val,
-            _ => panic!("Stored value does not match unwrap type")
-        }
-    }
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Component {
-    component: String,
-    #[serde(default)]
-    initial_value: Option<InitialValue>,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Template {
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Prototype {
     pub feature_packs: Vec<String>,
-    pub components: Vec<Component>,
+    pub features: Features,
 }
 
 
@@ -94,25 +123,25 @@ type Name = String;
 type Type = String;
 
 
-#[derive(Debug, Deserialize)]
-pub struct Templates {
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Prototypes {
     #[serde(flatten)]
-    templates: HashMap<Name,Template>,
+    data: HashMap<Name,Prototype>
 }
 
-impl Templates {
-    /// For a given file load and parse the data into a list of templates
+impl Prototypes {
+    /// For a given file load and parse the data into a list of prototypes
     pub fn new(file: &str) -> Result<Self, ConfigError> {
-        let mut templates = Config::new();
-        templates.merge(File::with_name(file)).unwrap();
-        templates.try_into()
+        let mut prototypes = Config::new();
+        prototypes.merge(File::with_name(file)).unwrap();
+        prototypes.try_into()
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct FeaturePacks {
     #[serde(flatten)]
-    packs: HashMap<String, Vec<Component>>
+    data: HashMap<Name, Features>
 }
 
 impl FeaturePacks {
@@ -152,67 +181,65 @@ fn load_lists( list_dir: &str) -> ListCategories {
 
 #[derive(Debug)]
 pub struct Manager {
-    pub template_types: HashMap<Type,Templates>,
-    pub feature_packs: FeaturePacks,
+    pub prototypes: HashMap<Type,Prototypes>,
+    pub feature_packs:FeaturePacks,
     pub lists: ListCategories,
 }
 
 impl Manager {
-    /// For a given directory, itterate over files and load in the templates
-    /// and return a Template maanger
+    /// For a given directory, itterate over files and load in the prototypes
+    /// and return a Prototype maanger
     pub fn new(config: &Settings) -> Self {
-        let feature_packs =
-            match FeaturePacks::new(&config.dirs) {
+        let mut manager = Self {
+            prototypes: HashMap::new(),
+            feature_packs: match FeaturePacks::new(&config.dirs) {
                 Ok(fp) => fp,
                 Err(message) => {
-                    display_template_error(&format!("{},{}", &config.dirs.data, &config.dirs.entities.feature_packs), message.to_string());
-                    panic!()
+                    display_prototype_error(&format!("{},{}", &config.dirs.data, &config.dirs.entities.feature_packs), message.to_string());
+                    panic!();
                 }
-            };
-        let mut manager = Self {
-            template_types: HashMap::new(),
-            feature_packs: feature_packs ,
+            },
             lists: load_lists(&format!("{}{}", &config.dirs.data, &config.dirs.entities.lists))
         };
 
-        'template_types: for raw_path in fs::read_dir(&format!("{}{}", &config.dirs.data, &config.dirs.entities.templates)).unwrap() {
+        'prototypes: for raw_path in fs::read_dir(&format!("{}{}", &config.dirs.data, &config.dirs.entities.prototypes)).unwrap() {
             let path = raw_path.unwrap().path();
             let file_path = path.clone();
             let type_name = path.clone();
-            let templates =
-                match Templates::new(type_name.to_str().unwrap()) {
-                    Ok(templates) => templates,
+            let prototypes =
+                match Prototypes::new(type_name.to_str().unwrap()) {
+                    Ok(prototypes) => prototypes,
                     Err(message) => {
-                        display_template_error(file_path.clone().to_str().unwrap(), message.to_string());
-                        continue 'template_types
+                        display_prototype_error(file_path.clone().to_str().unwrap(), message.to_string());
+                        continue 'prototypes
                     },
                 };
-            manager.template_types.insert(file_path.file_stem().unwrap().to_str().unwrap().to_owned(), templates);
+            manager.prototypes.insert(file_path.file_stem().unwrap().to_str().unwrap().to_owned(), prototypes);
         };
         manager
     }
 }
 
 impl Index<Type> for Manager {
-    type Output = Templates;
+    type Output = Prototypes;
 
-    /// Returns a reference to template type
+    /// Returns a reference to prototype type
     fn index(&self, t_type: Type) -> &Self::Output {
-        &self.template_types[&t_type]
+        &self.prototypes[&t_type]
     }
 
 }
 
-impl Index<Name> for Templates {
-    type Output = Template;
+impl Index<Name> for Prototypes {
+    type Output = Prototype;
 
-    /// Returns a reference to template type
+    /// Returns a reference to prototype type
     fn index(&self, name: Name) -> &Self::Output {
-        &self.templates[&name]
+        &self[name.to_string()]
     }
 
 }
 
-fn display_template_error(file: &str, message: String) {
-    println!("TemplateManager: file({:?}), {}", file, message)
+fn display_prototype_error(file: &str, message: String) {
+    println!("Prototype loading failed for file {:?} because {}", file, message)
 }

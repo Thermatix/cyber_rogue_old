@@ -3,13 +3,13 @@ orc:
   feature_packs:
     - physical
     - basic_identifiers_mob
-  components:
+  features:
     - component: char
-      initial_value: T
+      value: T
 goblin:
   feature_packs:
     - physical
     - basic_identifiers_mob
-  components:
+  features:
     - component: char
-      initial_value: t
+      value: t
