@@ -17,4 +17,7 @@ pub trait Component {
 
     fn update(&mut self, value: Self::ValueType);
 
+    // fn init(&mut self) -> Self {
+    //     self.value = self.prototype
+    // }
 }
