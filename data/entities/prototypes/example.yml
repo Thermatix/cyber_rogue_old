@@ -1,0 +1,13 @@
+---
+example:
+  feature_packs:
+    - example
+    - example
+  features:
+    - component: char
+      value: T
+    - component: name
+      value: 'asdasdasd'
+    - component: position
+    - component: location
+      value: 'asdasd'

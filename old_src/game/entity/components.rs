@@ -1,7 +1,4 @@
-
-extern crate specs;
-
-use self::specs::{Component, VecStorage, NullStorage};
+use super::Component;
 
 #[derive(Debug)]
 struct Position {

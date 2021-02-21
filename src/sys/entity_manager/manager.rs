@@ -4,33 +4,45 @@ use std::marker::PhantomData;
 use nanoid;
 
 
-use game::entity::Entity;
-use game::entity::Component;
+use crate::game::entity::Entity;
+use crate::game::entity::Component;
+use super::storage::ID;
+use super::Storage;
+
+use typemap::{TypeMap, Key};
 
 const DELIMIT: char = '.';
 const ID_LEN: usize = 15;
 
-type ID = String;
-type Category<'m> = &'m str;
-type ComponentCat<'m, Comp>= HashMap<ID, Component<'m, ValueType=Comp::ValueType>>;
-type EntityComponents<'m, Comp> = HashMap<Category<'m>, ComponentCat<'m, Comp>>;
+type EntityComponents = TypeMap;
 type Entities = HashMap<ID,Entity>;
 
-pub struct Manager<'m, Comp>
-    where Comp: Component<'m>
-    {
+#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+pub struct ComponentId<Comp: Component> {
+    _phantom: PhantomData<Comp>
+}
+
+impl<Comp: Component+'static> Key for ComponentId<Comp>  {
+    type Value = Storage<Comp>;
+}
+
+impl<Comp: Component+'static> ComponentId<Comp> {
+    fn new() -> Self {
+        Self {_phantom: PhantomData }
+    }
+}
+
+pub struct Manager {
     pub entities: Entities,
-    pub components: EntityComponents<'m, Comp>,
-    phantom: PhantomData<&'m ()>
+    pub components: EntityComponents,
 }
 
 
-impl<'m, Comp: Component<'m>> Manager<'m, Comp> {
+impl Manager {
     pub fn new() -> Self {
         Self {
             entities: Entities::new(),
             components: EntityComponents::new(),
-            phantom: PhantomData,
         }
     }
 
@@ -45,16 +57,29 @@ impl<'m, Comp: Component<'m>> Manager<'m, Comp> {
 
     /// add a <struct that impliments component> to a given entity 'id' with initial_value of
     /// component::valuetype
-    pub fn add_component(&mut self, id: ID, initial_value: Comp::ValueType)
-        where Comp: Component<'m>
-        {
-            if !self.components.contains_key(&Comp::IDName) {
-                self.components.insert(Comp::IDName.clone(), ComponentCat::new());
+    pub fn add_component<Comp: Component+'static>(&mut self, id: ID, initial_value: Comp::ValueType)
+    where Comp: Component
+    {
+            let comp_storage: Storage<Comp> = Storage::new();
+            if !self.components.contains::<ComponentId<Comp>>() {
+                self.components.insert::<ComponentId<Comp>>(comp_storage);
             }
-            self.components[&Comp::IDName].insert(id.clone(), Comp::new(initial_value));
-
+            self.components.get_mut::<ComponentId<Comp>>().unwrap().insert(id.clone(), Comp::new(initial_value));
     }
 
+    pub fn get_component<Comp: Component+'static>(&self, id: ID) -> Option<& impl Component> {
+        match self.components.get::<ComponentId<Comp>>() {
+            Some(storage) => Some(&storage[id]),
+            None => None
+        }
+    }
+
+    pub fn get_mut_component<Comp: Component+'static>(&mut self, id: ID) -> Option<&mut impl Component> {
+        match self.components.get_mut::<ComponentId<Comp>>() {
+            Some(storage) => Some(&mut storage[id]),
+            None => None
+        }
+    }
 
     /// Generate new id that doesn't exist
     fn generate_id(&self) -> ID{
@@ -64,9 +89,16 @@ impl<'m, Comp: Component<'m>> Manager<'m, Comp> {
         };
         id
     }
+
+    fn build(&mut self, entity_type: String, prototype_name: String, data_manager: &crate::sys::DataManager ) {
+        let _prototype = &data_manager.prototypes[&entity_type][prototype_name];
+        let _id = self.create();
+
+
+    }
 }
 
-impl<'m, Comp: Component<'m>> Index<ID> for Manager<'m, Comp> {
+impl Index<ID> for Manager {
 
     type Output = Entity;
 
@@ -76,11 +108,10 @@ impl<'m, Comp: Component<'m>> Index<ID> for Manager<'m, Comp> {
     }
 }
 
-impl<'m, Comp: Component<'m>> IndexMut<ID> for Manager<'m, Comp> {
+impl IndexMut<ID> for Manager {
 
     /// Returns a mutable reference to an entity for a given 'id'
     fn index_mut(&mut self, id: ID) -> &mut Entity {
         self.entities.get_mut(&id).unwrap()
     }
 }
-

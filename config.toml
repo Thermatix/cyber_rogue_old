@@ -15,3 +15,9 @@ room_max_no=30
 [monsters]
 max_monsters=3
 
+[dirs]
+data='data/'
+[dirs.entities]
+prototypes='entities/prototypes/'
+lists="entities/lists"
+feature_packs="entities/feature_packs.yml"

@@ -1,7 +1,3 @@
-mod structs;
-mod loader;
+pub mod loader;
 
-
-pub use self::structs::Settings;
-
-
+pub use self::loader::Settings;

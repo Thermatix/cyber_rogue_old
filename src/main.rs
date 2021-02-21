@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 //config crates
 extern crate config as config_rs;
 extern crate serde;
@@ -7,19 +8,23 @@ extern crate nanoid;
 #[macro_use]
 extern crate serde_derive;
 
+// sys crates
+extern crate typemap;
+
 mod utility;
 mod sys;
 mod game;
 
 
-
-
-
 fn main() {
 
 //  intialize
-    let settings = utility::config::Settings::new("config.toml");
-    let manager = sys::EntityManager::new();
+    let settings = utility::config::Settings::new("config.toml").unwrap();
+    // let manager = sys::EntityManager::new();
+    let data_manager = sys::DataManager::new(&settings);
+    println!("{:?}", data_manager);
+
+
     //
 
 
